@@ -139,7 +139,51 @@ int main() {
       // current password correct
       user::EditPassword(UserID, password2);
     } else if (token == "useradd") {
-
+      if (!line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string UserID = line.nextToken();
+      if (!line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string Password = line.nextToken();
+      if (!line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string Privilege = line.nextToken();
+      if (!line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string Username = line.nextToken();
+      if (line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      // input is valid
+      // check the privilege
+      int privilege = 0;
+      for (char c : Privilege) {
+        if (c - '0' > 9 || c - '0' < 0) {
+          std::cout << "Invalid\n";
+          continue;
+        }
+        privilege = privilege * 10 + (c - '0');
+      }
+      if (privilege >= logging_stack.log_stack[logging_stack.size - 1].privilege) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      // created privilege is lower than current privilege
+      if (user::IfExist(UserID) != 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      // do not repeat
+      user::AddUser(UserID, Username, Password, privilege);
     } else if (token == "delete") {
 
     } else if (token == "show") {
