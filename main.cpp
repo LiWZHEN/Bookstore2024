@@ -97,7 +97,47 @@ int main() {
       // not repeat
       user::AddUser(user_ID, Username, Password, 1);
     } else if (token == "passwd") {
-
+      if (!line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string UserID = line.nextToken();
+      if (!line.hasMoreTokens()) { // anyway the input should have one password
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string password1 = line.nextToken();
+      if (!line.hasMoreTokens()) { // need to check the current privilege
+        if (logging_stack.size == 0) {
+          std::cout << "Invalid\n";
+          continue;
+        }
+        if (logging_stack.log_stack[logging_stack.size - 1].privilege != 7) {
+          std::cout << "Invalid\n";
+          continue;
+        }
+        // it is the manager who omit the old password
+        user::EditPassword(UserID, password1);
+        continue;
+      }
+      std::string password2 = line.nextToken();
+      if (line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      // now the input is valid, we have: UserID && password1 && password2
+      unsigned long long bp = user::IfExist(UserID);
+      if (bp == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      // user exist
+      if (user::CheckPassword(UserID, password1) != 1) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      // current password correct
+      user::EditPassword(UserID, password2);
     } else if (token == "useradd") {
 
     } else if (token == "delete") {
