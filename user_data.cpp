@@ -475,8 +475,8 @@ void user::AddUser(const user_data &u) {
   } // just write the block back
   file.close();
 }
-void user::AddUser(const std::string &ID, const std::string &Name, const std::string &Password, int privilege) {
-  const user_data u = {ID, Password, Name, privilege};
+void user::AddUser(const std::string &ID, const std::string &Name, const std::string &Password, int privilege, bool logged) {
+  const user_data u = {ID, Password, Name, privilege, logged};
   AddUser(u);
 }
 void user::Delete(const std::string &ID) {
@@ -576,4 +576,17 @@ void user::EditPassword(const std::string &ID, const std::string &NewPassword) {
   file.seekp(bp);
   file.write(reinterpret_cast<char *>(& block), sizeof(block));
   file.close();
+}
+bool user::IfOnline(const std::string &ID) {
+  unsigned long long bp = IfExist(ID);
+  if (bp == 0) {
+    std::cout << "Invalid\n";
+    return false;
+  }
+  std::fstream file(user_file);
+  Block block;
+  file.seekg(bp);
+  file.read(reinterpret_cast<char *>(& block), sizeof(block));
+  int index = block.FindUpper(ID);
+  return block.block[index].logged;
 }
