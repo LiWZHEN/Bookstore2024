@@ -95,7 +95,7 @@ int main() {
         continue;
       }
       // not repeat
-      user::AddUser(user_ID, Username, Password, 1);
+      user::AddUser(user_ID, Username, Password, 1, false);
     } else if (token == "passwd") {
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
@@ -183,9 +183,29 @@ int main() {
         continue;
       }
       // do not repeat
-      user::AddUser(UserID, Username, Password, privilege);
+      user::AddUser(UserID, Username, Password, privilege, false);
     } else if (token == "delete") {
-
+      if (!line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string UserID = line.nextToken();
+      if (line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      unsigned long long bp = user::IfExist(UserID);
+      if (bp == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      // user can be found
+      if (user::IfOnline(UserID)) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      // not online
+      user::Delete(UserID);
     } else if (token == "show") {
       token = line.nextToken();
       if (token == "finance") {
