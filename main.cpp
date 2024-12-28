@@ -69,7 +69,33 @@ int main() {
       }
       logging_stack.LogOut();
     } else if (token == "register") {
-
+      if (!line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string user_ID = line.nextToken();
+      if (!line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string Password = line.nextToken();
+      if (!line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string Username = line.nextToken();
+      if (line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      // the input format is valid, now we have: user_ID && Password && Username
+      unsigned long long bp = user::IfExist(user_ID);
+      if (bp != 0) { // repeat
+        std::cout << "Invalid\n";
+        continue;
+      }
+      // not repeat
+      user::AddUser(user_ID, Username, Password, 1);
     } else if (token == "passwd") {
 
     } else if (token == "useradd") {
