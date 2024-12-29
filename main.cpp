@@ -259,7 +259,25 @@ int main() {
       double price = target.Price.ToDouble() * quantity;
       std::cout << price << "\n";
     } else if (token == "select") {
-
+      if (!line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string ISBN = line.nextToken();
+      if (line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      if (logging_stack.size == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      // now we get ISBN and promise there is someone who is online
+      unsigned long long bp = book::IfExist(ISBN);
+      if (bp == 0) { // not exist currently, add the book to book_file
+        book::AddBook(ISBN, "", "", "", 0, 0);
+      }
+      logging_stack.log_stack[logging_stack.size - 1].selected_book = ISBN;
     } else if (token == "modify") {
 
     } else if (token == "import") {
