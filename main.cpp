@@ -253,10 +253,21 @@ int main() {
           continue;
         }
         if (!line.hasMoreTokens()) {
-          // todo: out put overall finance
+          finance::print(finance::finance.size());
         }
         std::string count = line.nextToken();
         if (count.length() > 10) {
+          std::cout << "Invalid\n";
+          continue;
+        }
+        bool valid_c = true;
+        for (int i = 0; i < count.length(); ++i) {
+          if (count[i] < '0' || count[i] > '9') {
+            valid_c = false;
+            break;
+          }
+        }
+        if (!valid_c) {
           std::cout << "Invalid\n";
           continue;
         }
@@ -269,7 +280,8 @@ int main() {
           continue;
         }
         // now we get count
-        // todo: output the sum of latest "count" number of finance
+        int c = book::fixed_char_10(count).ToInt();
+        finance::print(c);
       } else {
         int len = token.length();
         if (token[0] != '-') {
