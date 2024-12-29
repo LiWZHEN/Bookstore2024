@@ -280,7 +280,97 @@ int main() {
       }
       logging_stack.log_stack[logging_stack.size - 1].selected_book = ISBN;
     } else if (token == "modify") {
+      if (logging_stack.size == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string selected_ISBN = logging_stack.log_stack[logging_stack.size - 1].selected_book;
+      if (selected_ISBN.empty()) { // select no book
+        std::cout << "Invalid\n";
+        continue;
+      }
+      // there is a book selected, whose ID is selected_ISBN
+      if (!line.hasMoreTokens()) { // empty command, invalid
+        std::cout << "Invalid\n";
+        continue;
+      }
+      bool edit_ISBN = false, edit_name = false, edit_author = false, edit_keyword = false, edit_price = false;
+      std::string new_ISBN, new_name, new_author, new_keyword, new_price;
+      bool repeated = false;
 
+      // read commands until there is no more commands or the same category occurs more than one time
+      while (line.hasMoreTokens() && !repeated) {
+
+        std::string cmd = line.nextToken(); // the whole command for one time
+        int len = cmd.length();
+        std::string chop; // to see the category
+        int it = 1;
+        while(cmd[it] != '=') {
+          chop += cmd[it];
+          ++it;
+        }
+        ++it; // skip '='
+
+        if (chop == "ISBN") {
+          if (edit_ISBN) {
+            repeated = true;
+          }
+          edit_ISBN = true;
+          for (; it < len; ++it) {
+            new_ISBN += cmd[it];
+          }
+        } else if (chop == "name") {
+          if (edit_name) {
+            repeated = true;
+          }
+          edit_name = true;
+          for (; it < len; ++it) {
+            new_name += cmd[it];
+          }
+        } else if (chop == "author") {
+          if (edit_author) {
+            repeated = true;
+          }
+          edit_author = true;
+          for (; it < len; ++it) {
+            new_author += cmd[it];
+          }
+        } else if (chop == "keyword") {
+          if (edit_keyword) {
+            repeated = true;
+          }
+          edit_keyword = true;
+          for (; it < len; ++it) {
+            new_keyword += cmd[it];
+          }
+        } else if (chop == "price") {
+          if (edit_price) {
+            repeated = true;
+          }
+          edit_price = true;
+          for (; it < len; ++it) {
+            new_price += cmd[it];
+          }
+        }
+      }
+      if (repeated) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      if (edit_ISBN) {
+        unsigned long long bp = book::IfExist(new_ISBN); // check if the ISBN has existed
+        if (bp != 0) {
+          std::cout << "Invalid\n";
+          continue;
+        }
+        // only when the ISBN repetition occurs, the check will have a real impact
+      }
+      if (edit_keyword) {
+        // todo: check whether the key words have repetition, if repeated, print invalid and continue
+
+      }
+      book::Edit(selected_ISBN, edit_ISBN, edit_name, edit_author, edit_keyword, false, edit_price,
+          new_ISBN, new_name, new_author, new_keyword, "", new_price);
     } else if (token == "import") {
 
     } else if (token == "log") {
