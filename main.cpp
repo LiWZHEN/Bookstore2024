@@ -315,7 +315,7 @@ int main() {
             name += token[it];
           }
           std::vector<std::string> ISBN_set = book_name::find(name);
-          if (ISBN_set.size() == 0) {
+          if (ISBN_set.empty()) {
             std::cout << "\n";
             continue;
           }
@@ -329,7 +329,16 @@ int main() {
           for (; it < len; ++it) {
             author += token[it];
           }
-          // todo: create a "author->ISBN" file manager to handle this
+          std::vector<std::string> ISBN_set = author::find(author);
+          if (ISBN_set.empty()) {
+            std::cout << "\n";
+            continue;
+          }
+          for (int i = 0; i < ISBN_set.size(); ++i) {
+            book::book_data bk = book::Get_book(ISBN_set[i]);
+            std::cout << bk.ISBN << "\t" << bk.BookName << "\t" << bk.Author << "\t" << bk.Keyword
+                << "\t" << bk.Price << "\t" << bk.Storage << "\n";
+          }
         } else if (chop == "keyword") {
           std::string keyword;
           for (; it < len; ++it) {
@@ -530,6 +539,17 @@ int main() {
           book_name::insert(original_name.ToString(), new_ISBN);
         } else {
           book_name::insert(new_name, selected_ISBN);
+        }
+      }
+      if (edit_ISBN || edit_author) {
+        book::fixed_char_60 original_author = book::Get_book(selected_ISBN).Author;
+        author::erase(original_author.ToString(), selected_ISBN);
+        if (edit_ISBN && edit_name) {
+          author::insert(new_name, new_ISBN);
+        } else if (edit_ISBN) {
+          author::insert(original_author.ToString(), new_ISBN);
+        } else {
+          author::insert(new_name, selected_ISBN);
         }
       }
       book::Edit(selected_ISBN, edit_ISBN, edit_name, edit_author, edit_keyword, false, edit_price,
