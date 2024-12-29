@@ -5,7 +5,7 @@
 #include "log_in_and_out.h"
 #include "user_data.h"
 #include "finance.h"
-#include "bookname_processor.h"
+#include "book_name_processor.h"
 #include "author_processor.h"
 #include "key_processor.h"
 
@@ -314,7 +314,16 @@ int main() {
           for (; it < len; ++it) {
             name += token[it];
           }
-          // todo: create a "name->ISBN" file manager to handle this
+          std::vector<std::string> ISBN_set = book_name::find(name);
+          if (ISBN_set.size() == 0) {
+            std::cout << "\n";
+            continue;
+          }
+          for (int i = 0; i < ISBN_set.size(); ++i) {
+            book::book_data bk = book::Get_book(ISBN_set[i]);
+            std::cout << bk.ISBN << "\t" << bk.BookName << "\t" << bk.Author << "\t" << bk.Keyword
+                << "\t" << bk.Price << "\t" << bk.Storage << "\n";
+          }
         } else if (chop == "author") {
           std::string author;
           for (; it < len; ++it) {
@@ -511,6 +520,17 @@ int main() {
       if (edit_keyword) {
         // todo: check whether the key words have repetition, if repeated, print invalid and continue
 
+      }
+      if (edit_ISBN || edit_name) {
+        book::fixed_char_60 original_name = book::Get_book(selected_ISBN).BookName;
+        book_name::erase(original_name.ToString(), selected_ISBN);
+        if (edit_ISBN && edit_name) {
+          book_name::insert(new_name, new_ISBN);
+        } else if (edit_ISBN) {
+          book_name::insert(original_name.ToString(), new_ISBN);
+        } else {
+          book_name::insert(new_name, selected_ISBN);
+        }
       }
       book::Edit(selected_ISBN, edit_ISBN, edit_name, edit_author, edit_keyword, false, edit_price,
           new_ISBN, new_name, new_author, new_keyword, "", new_price);

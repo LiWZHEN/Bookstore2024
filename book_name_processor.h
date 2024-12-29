@@ -4,7 +4,7 @@
 #include <fstream>
 #include <vector>
 
-namespace hash_processor {
+namespace book_name {
   const unsigned long P = 131;
   const unsigned long Q = 107;
   const unsigned long M = 1e9 + 7;
