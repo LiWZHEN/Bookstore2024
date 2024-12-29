@@ -1,4 +1,6 @@
 #include <iostream>
+
+#include "book_data.h"
 #include "StanfordCPPLib/tokenscanner.h"
 #include "log_in_and_out.h"
 #include "user_data.h"
@@ -214,7 +216,48 @@ int main() {
 
       }
     } else if (token == "buy") {
-
+      if (!line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string ISBN = line.nextToken();
+      if (!line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string Quantity = line.nextToken();
+      if (Quantity[0] == '-') {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      if (line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      // we have got ISBN && Quantity
+      int quantity = 0;
+      for (char c : Quantity) {
+        quantity = quantity * 10 + (c - '0');
+      }
+      unsigned long long bp = book::IfExist(ISBN);
+      if (bp == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      // target book exist
+      book::book_data target = book::Get_book(ISBN);
+      if (target.Storage < Quantity) { // storage insufficient
+        std::cout << "Invalid\n";
+        continue;
+      }
+      // can buy
+      int new_storage = target.Storage.ToInt() - quantity;
+      std::string str_new_storage = book::fixed_char_10(new_storage).ToString();
+      book::Edit(ISBN, false, false, false, false,
+          true, false, "", "", "",
+          "", str_new_storage,"");
+      double price = target.Price.ToDouble() * quantity;
+      std::cout << price << "\n";
     } else if (token == "select") {
 
     } else if (token == "modify") {
