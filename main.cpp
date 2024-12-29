@@ -4,7 +4,7 @@
 #include "StanfordCPPLib/tokenscanner.h"
 #include "log_in_and_out.h"
 #include "user_data.h"
-// #include "MemoryRiver.h"
+#include "finance.h"
 
 int main() {
   stack logging_stack;
@@ -364,6 +364,7 @@ int main() {
           "", str_new_storage,"");
       double price = target.Price.ToDouble() * quantity;
       std::cout << price << "\n";
+      finance::insert(price, 0);
     } else if (token == "select") {
       if (logging_stack.size == 0) {
         std::cout << "Invalid\n";
@@ -503,12 +504,70 @@ int main() {
         std::cout << "Invalid\n";
         continue;
       }
-      int current_privilege = logging_stack.log_stack[logging_stack.size - 1].privilege;
+      user_book_privilege current_online = logging_stack.log_stack[logging_stack.size - 1];
+      int current_privilege = current_online.privilege;
       if (current_privilege < 3) {
         std::cout << "Invalid\n";
         continue;
       }
-
+      if (current_online.selected_book.empty()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      if (!line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string Quantity = line.nextToken();
+      bool valid_Q = true;
+      for (int i = 0; i < Quantity.length(); ++i) {
+        if (Quantity[i] < '0' || Quantity[i] > '9') {
+          valid_Q = false;
+          break;
+        }
+      }
+      if (!valid_Q) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      if (!line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      std::string TotalCost = line.nextToken();
+      bool valid_T = true;
+      for (int i = 0; i < TotalCost.length(); ++i) {
+        if (!valid_T) {
+          break;
+        }
+        if (i == TotalCost.length() - 3) {
+          if (TotalCost[i] != '.') {
+            valid_T = false;
+          }
+          continue;
+        }
+        if (TotalCost[i] < '0' || TotalCost[i] > '9') {
+          valid_T = false;
+          break;
+        }
+      }
+      if (!valid_T) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      if (line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      int quantity = book::fixed_char_10(Quantity).ToInt();
+      book::fixed_char_10 Storage = book::Get_book(current_online.selected_book).Storage;
+      quantity += Storage.ToInt();
+      std::string Q = book::fixed_char_10(quantity).ToString();
+      double total_cost = book::fixed_char_13(TotalCost).ToDouble();
+      book::Edit(current_online.selected_book, false, false, false,
+          false, true, false, "", "", "",
+          "", Q, "");
+      finance::insert(0, total_cost);
     } else if (token == "log") {
       if (logging_stack.size == 0) {
         std::cout << "Invalid\n";
