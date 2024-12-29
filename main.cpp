@@ -110,6 +110,14 @@ int main() {
       // not repeat
       user::AddUser(user_ID, Username, Password, 1, false);
     } else if (token == "passwd") {
+      if (logging_stack.size == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      if (logging_stack.log_stack[logging_stack.size - 1].privilege < 1) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
@@ -121,10 +129,6 @@ int main() {
       }
       std::string password1 = line.nextToken();
       if (!line.hasMoreTokens()) { // need to check the current privilege
-        if (logging_stack.size == 0) {
-          std::cout << "Invalid\n";
-          continue;
-        }
         if (logging_stack.log_stack[logging_stack.size - 1].privilege != 7) {
           std::cout << "Invalid\n";
           continue;
@@ -152,6 +156,15 @@ int main() {
       // current password correct
       user::EditPassword(UserID, password2);
     } else if (token == "useradd") {
+      if (logging_stack.size == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      int current_privilege = logging_stack.log_stack[logging_stack.size - 1].privilege;
+      if (current_privilege < 3) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
@@ -186,10 +199,6 @@ int main() {
         }
         privilege = privilege * 10 + (c - '0');
       }
-      if (privilege >= logging_stack.log_stack[logging_stack.size - 1].privilege) {
-        std::cout << "Invalid\n";
-        continue;
-      }
       // created privilege is lower than current privilege
       if (user::IfExist(UserID) != 0) {
         std::cout << "Invalid\n";
@@ -198,6 +207,15 @@ int main() {
       // do not repeat
       user::AddUser(UserID, Username, Password, privilege, false);
     } else if (token == "delete") {
+      if (logging_stack.size == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      int current_privilege = logging_stack.log_stack[logging_stack.size - 1].privilege;
+      if (current_privilege < 7) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
@@ -220,11 +238,20 @@ int main() {
       // not online
       user::Delete(UserID);
     } else if (token == "show") {
+      if (logging_stack.size == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (!line.hasMoreTokens()) { // has no more token
         // todo: out put all books
       }
       token = line.nextToken();
       if (token == "finance") {
+        int current_privilege = logging_stack.log_stack[logging_stack.size - 1].privilege;
+        if (current_privilege < 3) {
+          std::cout << "Invalid\n";
+          continue;
+        }
         if (!line.hasMoreTokens()) {
           // todo: out put overall finance
         }
@@ -291,6 +318,10 @@ int main() {
         }
       }
     } else if (token == "buy") {
+      if (logging_stack.size == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
@@ -334,16 +365,21 @@ int main() {
       double price = target.Price.ToDouble() * quantity;
       std::cout << price << "\n";
     } else if (token == "select") {
+      if (logging_stack.size == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      int current_privilege = logging_stack.log_stack[logging_stack.size - 1].privilege;
+      if (current_privilege < 3) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
       }
       std::string ISBN = line.nextToken();
       if (line.hasMoreTokens()) {
-        std::cout << "Invalid\n";
-        continue;
-      }
-      if (logging_stack.size == 0) {
         std::cout << "Invalid\n";
         continue;
       }
@@ -355,6 +391,11 @@ int main() {
       logging_stack.log_stack[logging_stack.size - 1].selected_book = ISBN;
     } else if (token == "modify") {
       if (logging_stack.size == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      int current_privilege = logging_stack.log_stack[logging_stack.size - 1].privilege;
+      if (current_privilege < 3) {
         std::cout << "Invalid\n";
         continue;
       }
@@ -458,10 +499,37 @@ int main() {
       book::Edit(selected_ISBN, edit_ISBN, edit_name, edit_author, edit_keyword, false, edit_price,
           new_ISBN, new_name, new_author, new_keyword, "", new_price);
     } else if (token == "import") {
+      if (logging_stack.size == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      int current_privilege = logging_stack.log_stack[logging_stack.size - 1].privilege;
+      if (current_privilege < 3) {
+        std::cout << "Invalid\n";
+        continue;
+      }
 
     } else if (token == "log") {
+      if (logging_stack.size == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      int current_privilege = logging_stack.log_stack[logging_stack.size - 1].privilege;
+      if (current_privilege < 7) {
+        std::cout << "Invalid\n";
+        continue;
+      }
 
     } else if (token == "report") {
+      if (logging_stack.size == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      int current_privilege = logging_stack.log_stack[logging_stack.size - 1].privilege;
+      if (current_privilege < 7) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       token = line.nextToken();
       if (token == "finance") {
 
