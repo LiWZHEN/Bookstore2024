@@ -9,7 +9,7 @@ const int stack_capacity = 1000;
 
 struct user_book_privilege {
   std::string username;
-  std::string selected_book = "null";
+  std::string selected_book;
   int privilege = 1;
 };
 
