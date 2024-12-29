@@ -11,6 +11,7 @@ int main() {
     std::string command;
     std::getline(std::cin, command);
     if (command == "quit" || command == "exit") {
+      logging_stack.exit();
       break;
     }
     TokenScanner line(command);
