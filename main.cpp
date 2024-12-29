@@ -4,6 +4,7 @@
 #include "StanfordCPPLib/tokenscanner.h"
 #include "log_in_and_out.h"
 #include "user_data.h"
+// #include "MemoryRiver.h"
 
 int main() {
   stack logging_stack;
@@ -11,10 +12,15 @@ int main() {
     std::string command;
     std::getline(std::cin, command);
     if (command == "quit" || command == "exit") {
-      logging_stack.exit();
+      while (logging_stack.size > 0) {
+        user::Logout(logging_stack.log_stack[logging_stack.size - 1].username);
+        --logging_stack.size;
+      }
+      // logging_stack.exit();
       break;
     }
     TokenScanner line(command);
+    line.ignoreWhitespace();
     std::string token;
     token = line.nextToken();
     if (token == "su") {
@@ -47,7 +53,8 @@ int main() {
         }
 
         // the privilege is higher
-        logging_stack.LogIn(block.block[index].Name.ToString(), "null", block.block[index].privilege);
+        logging_stack.LogIn(user_ID, "null", block.block[index].privilege);
+        user::Login(user_ID);
         continue;
       }
 
@@ -64,13 +71,16 @@ int main() {
         std::cout << "Invalid\n";
         continue;
       }
-      logging_stack.LogIn(block.block[index].Name.ToString(), "null", block.block[index].privilege);
+      logging_stack.LogIn(user_ID, "null", block.block[index].privilege);
+      user::Login(user_ID);
     } else if (token == "logout") {
       if (logging_stack.size == 0) {
         std::cout << "Invalid\n";
         continue;
       }
-      logging_stack.LogOut();
+      user::Logout(logging_stack.log_stack[logging_stack.size - 1].username);
+      --logging_stack.size;
+      // logging_stack.LogOut();
     } else if (token == "register") {
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
