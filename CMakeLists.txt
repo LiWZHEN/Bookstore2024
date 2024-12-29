@@ -5,4 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(Bookstore_lwz
         main.cpp
-        user_data.cpp)
+        user_data.cpp
+        book_data.cpp
+        bookname_processor.cpp
+        author_processor.cpp
+        key_processor.cpp)
