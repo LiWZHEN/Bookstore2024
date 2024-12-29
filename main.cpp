@@ -210,11 +210,75 @@ int main() {
       // not online
       user::Delete(UserID);
     } else if (token == "show") {
+      if (!line.hasMoreTokens()) { // has no more token
+        // todo: out put all books
+      }
       token = line.nextToken();
       if (token == "finance") {
-
+        if (!line.hasMoreTokens()) {
+          // todo: out put overall finance
+        }
+        std::string count = line.nextToken();
+        if (count.length() > 10) {
+          std::cout << "Invalid\n";
+          continue;
+        }
+        if (book::fixed_char_10(count).ToInt() > 2147483647) {
+          std::cout << "Invalid\n";
+          continue;
+        }
+        if (line.hasMoreTokens()) {
+          std::cout << "Invalid\n";
+          continue;
+        }
+        // now we get count
+        // todo: output the sum of latest "count" number of finance
       } else {
+        int len = token.length();
+        if (token[0] != '-') {
+          std::cout << "Invalid\n";
+          continue;
+        }
+        std::string chop; // to see the category
+        int it = 1;
+        while(token[it] != '=' && it < len) {
+          chop += token[it];
+          ++it;
+        }
+        ++it; // skip '='
+        if (it >= len) {
+          std::cout << "Invalid\n";
+          continue;
+        }
 
+        if (chop == "ISBN") {
+          std::string isbn;
+          for (; it < len; ++it) {
+            isbn += token[it];
+          }
+          book::ShowBook(isbn);
+        } else if (chop == "name") {
+          std::string name;
+          for (; it < len; ++it) {
+            name += token[it];
+          }
+          // todo: create a "name->ISBN" file manager to handle this
+        } else if (chop == "author") {
+          std::string author;
+          for (; it < len; ++it) {
+            author += token[it];
+          }
+          // todo: create a "author->ISBN" file manager to handle this
+        } else if (chop == "keyword") {
+          std::string keyword;
+          for (; it < len; ++it) {
+            keyword += token[it];
+          }
+          // todo: create a "keyword->ISBN" file manager to handle this
+        } else {
+          std::cout << "Invalid\n";
+          continue;
+        }
       }
     } else if (token == "buy") {
       if (!line.hasMoreTokens()) {
@@ -302,14 +366,23 @@ int main() {
       while (line.hasMoreTokens() && !repeated) {
 
         std::string cmd = line.nextToken(); // the whole command for one time
+        if (cmd[0] != '-') {
+          std::cout << "Invalid\n";
+          repeated = true; // the variable name makes no sense here
+          break;
+        }
         int len = cmd.length();
         std::string chop; // to see the category
         int it = 1;
-        while(cmd[it] != '=') {
+        while(cmd[it] != '=' || it < len) {
           chop += cmd[it];
           ++it;
         }
         ++it; // skip '='
+        if (it >= len) {
+          repeated = true; // the variable name makes no sense here, too
+          break;
+        }
 
         if (chop == "ISBN") {
           if (edit_ISBN) {
@@ -351,6 +424,9 @@ int main() {
           for (; it < len; ++it) {
             new_price += cmd[it];
           }
+        } else {
+          repeated = true;
+          break;
         }
       }
       if (repeated) {
@@ -383,7 +459,11 @@ int main() {
 
       } else {
         std::cout << "Invalid\n";
+        continue;
       }
+    } else {
+      std::cout << "Invalid\n";
+      continue;
     }
   }
   return 0;
