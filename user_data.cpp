@@ -135,6 +135,34 @@ void user::CreatFileIfNotExist(const std::string &fn) {
     new_file.write(reinterpret_cast<char *>(& empty_menu), sizeof(empty_menu));
     new_file.close();
   }
+  // now we can confirm there is a file with a menu (might be empty)
+  file.open(fn);
+  /* we need to check whether the menu is empty.
+   * If empty, create root(ID), root(name), sjtu(password), 7(privilege), false(logged) */
+  Menu menu;
+  file.seekg(0);
+  file.read(reinterpret_cast<char *>(& menu), sizeof(menu));
+  if (menu.size == 0) { // menu is empty, it means there is no block
+    user_data u("root", "sjtu", "root", 7, false);
+    Block bl;
+    bl.size = 1;
+    bl.block[0] = u;
+
+    file.seekp(0, std::ios::end);
+    unsigned long long block_position = file.tellp();
+    file.write(reinterpret_cast<char *>(& bl), sizeof(bl));
+
+    // revise the first one
+    ++menu.size;
+    menu.menu[0].ID = u.ID;
+    menu.menu[0].block_pos = block_position;
+
+    file.seekp(0);
+    file.write(reinterpret_cast<char *>(& menu), sizeof(menu));
+    file.close();
+    return;
+  }
+  file.close();
 }
 unsigned long long user::IfExist(const std::string &ID) {
   fixed_char target_ID = ID;
@@ -423,7 +451,7 @@ void user::AddUser(const user_data &u) {
 
     // write down the block and record its position
     file.seekp(0, std::ios::end);
-    long block_position = file.tellp();
+    unsigned long long block_position = file.tellp();
     file.write(reinterpret_cast<char *>(& new_block), sizeof(new_block));
 
     // creat a related unit_menu
@@ -458,7 +486,7 @@ void user::AddUser(const user_data &u) {
     // ok, now generate a new unit_menu
     ID_pos new_unit_menu;
     file.seekp(0, std::ios::end);
-    long new_u_pos = file.tellp();
+    unsigned long long new_u_pos = file.tellp();
     file.write(reinterpret_cast<char *> (& new_bl), sizeof(new_bl));
     new_unit_menu.block_pos = new_u_pos;
     new_unit_menu.ID = new_bl.block[0].ID;
