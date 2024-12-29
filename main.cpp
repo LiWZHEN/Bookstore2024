@@ -5,6 +5,9 @@
 #include "log_in_and_out.h"
 #include "user_data.h"
 #include "finance.h"
+#include "bookname_processor.h"
+#include "author_processor.h"
+#include "key_processor.h"
 
 int main() {
   stack logging_stack;
