@@ -63,7 +63,7 @@ namespace user {
     fixed_char Password;
     fixed_char Name;
     int privilege = 0;
-    bool logged = false;
+    int logged = 0;
     user_data &operator=(const user_data &other) {
       ID = other.ID;
       Password = other.Password;
@@ -115,7 +115,7 @@ namespace user {
   void CreatFileIfNotExist(const std::string &);
 
   unsigned long long IfExist(const std::string &); // return the position of block where target ID can be found (not exist: 0)
-  void AddUser(const std::string &, const std::string &, const std::string &, int, bool);
+  void AddUser(const std::string &, const std::string &, const std::string &, int, int);
   void AddUser(const user_data &);
   void EditPassword(const std::string &, const std::string &);
   void Delete(const std::string &);
@@ -123,6 +123,8 @@ namespace user {
 
   int CheckPassword(const std::string &, const std::string &); // no target ID: -1; wrong: 0; right: 1
   bool IfOnline(const std::string &);
+  void Login(const std::string &);
+  void Logout(const std::string &);
 }
 
 #endif //USER_DATA_H

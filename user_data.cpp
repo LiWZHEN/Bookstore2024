@@ -143,7 +143,7 @@ void user::CreatFileIfNotExist(const std::string &fn) {
   file.seekg(0);
   file.read(reinterpret_cast<char *>(& menu), sizeof(menu));
   if (menu.size == 0) { // menu is empty, it means there is no block
-    user_data u("root", "sjtu", "root", 7, false);
+    user_data u(fixed_char("root"), fixed_char("sjtu"), fixed_char("root"), 7, false);
     Block bl;
     bl.size = 1;
     bl.block[0] = u;
@@ -503,7 +503,7 @@ void user::AddUser(const user_data &u) {
   } // just write the block back
   file.close();
 }
-void user::AddUser(const std::string &ID, const std::string &Name, const std::string &Password, int privilege, bool logged) {
+void user::AddUser(const std::string &ID, const std::string &Name, const std::string &Password, int privilege, int logged) {
   const user_data u = {ID, Password, Name, privilege, logged};
   AddUser(u);
 }
@@ -616,5 +616,38 @@ bool user::IfOnline(const std::string &ID) {
   file.seekg(bp);
   file.read(reinterpret_cast<char *>(& block), sizeof(block));
   int index = block.FindUpper(ID);
+  file.close();
   return block.block[index].logged;
+}
+void user::Login(const std::string &ID) {
+  unsigned long long bp = IfExist(ID);
+  if (bp == 0) {
+    std::cout << "Invalid\n";
+    return;
+  }
+  std::fstream file(user_file);
+  Block block;
+  file.seekg(bp);
+  file.read(reinterpret_cast<char *>(& block), sizeof(block));
+  int index = block.FindUpper(ID);
+  ++block.block[index].logged;
+  file.seekp(bp);
+  file.write(reinterpret_cast<char *>(& block), sizeof(block));
+  file.close();
+}
+void user::Logout(const std::string &ID) {
+  unsigned long long bp = IfExist(ID);
+  if (bp == 0) {
+    std::cout << "Invalid\n";
+    return;
+  }
+  std::fstream file(user_file);
+  Block block;
+  file.seekg(bp);
+  file.read(reinterpret_cast<char *>(& block), sizeof(block));
+  int index = block.FindUpper(ID);
+  --block.block[index].logged;
+  file.seekp(bp);
+  file.write(reinterpret_cast<char *>(& block), sizeof(block));
+  file.close();
 }
