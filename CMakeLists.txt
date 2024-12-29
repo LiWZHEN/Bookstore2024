@@ -10,6 +10,4 @@ add_executable(Bookstore_lwz
         ./StanfordCPPLib/strlib.cpp
         user_data.cpp
         book_data.cpp
-        bookname_processor.cpp
-        author_processor.cpp
         key_processor.cpp)
