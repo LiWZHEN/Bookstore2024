@@ -249,8 +249,8 @@ namespace book {
   // return the position of block where target ISBN can be found (not exist: 0)
   unsigned long long IfExist(const std::string &);
 
-  void AddBook(const std::string &, const std::string &, const std::string &,
-      const std::string &, int, double);
+  void AddBook(const std::string &ISBN, const std::string &BookName,
+    const std::string &Author, const std::string &KeyWord, int Storage, double Price);
   void AddBook(const book_data &);
   void Delete(const std::string &);
   void Delete(const book_data &);

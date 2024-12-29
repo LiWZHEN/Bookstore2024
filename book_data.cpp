@@ -836,7 +836,8 @@ void book::AddBook(const book_data &u) {
   } // just write the block back
   file.close();
 }
-void book::AddBook(const std::string &ISBN, const std::string &BookName, const std::string &Author, const std::string &KeyWord, int Storage, double Price) {
+void book::AddBook(const std::string &ISBN, const std::string &BookName,
+    const std::string &Author, const std::string &KeyWord, int Storage, double Price) {
   const book_data b = {ISBN, BookName, Author, KeyWord, Storage, Price};
   AddBook(b);
 }
