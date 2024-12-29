@@ -16,12 +16,15 @@ struct user_book_privilege {
 class stack {
 public:
   stack() = default;
-  void LogIn(std::string name, std::string book, int privilege) {
-    log_stack[size] = {std::move(name), book, privilege};
+  void LogIn(std::string name, std::string ISBN, int privilege) {
+    log_stack[size] = {std::move(name), std::move(ISBN), privilege};
     ++size;
   }
   void LogOut() {
     --size;
+  }
+  void exit() {
+    size = 0;
   }
   user_book_privilege log_stack[stack_capacity];
   int size = 0;
