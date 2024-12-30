@@ -262,6 +262,7 @@ namespace book {
 
   book_data Get_book(const std::string &);
   void ShowBook(const std::string &);
+  void ShowAll();
 }
 
 #endif //BOOK_DATA_H

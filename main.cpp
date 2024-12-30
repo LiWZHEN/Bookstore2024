@@ -267,7 +267,7 @@ int main() {
         continue;
       }
       if (!line.hasMoreTokens()) { // has no more token
-        // todo: out put all books
+        book::ShowAll();
         continue;
       }
       token = line.nextToken();

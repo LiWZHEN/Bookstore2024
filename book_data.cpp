@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include "book_data.h"
+#include <iomanip>
 
 // -- 20
 book::fixed_char_20::fixed_char_20() {
@@ -973,7 +974,31 @@ void book::ShowBook(const std::string &ISBN) {
     std::cout << "\n";
   } else {
     book_data tgt = Get_book(ISBN);
+    double price = tgt.Price.ToDouble();
     std::cout << tgt.ISBN << "\t" << tgt.BookName << "\t" << tgt.Author << "\t" << tgt.Keyword
-        << "\t" << tgt.Price << "\t" << tgt.Storage << "\n";
+        << "\t" << std::fixed << std::setprecision(2) << price << "\t" << tgt.Storage << "\n";
   }
+}
+
+void book::ShowAll() {
+  CreatFileIfNotExist(book_file);
+  std::fstream file(book_file);
+  Menu menu;
+  file.seekg(0);
+  file.read(reinterpret_cast<char *> (&menu), sizeof(menu));
+  int bl_n = menu.size;
+  for (int i = 0; i < bl_n; ++i) {
+    unsigned long long bp = menu.menu[i].block_pos;
+    file.seekg(bp);
+    Block block;
+    file.read(reinterpret_cast<char *> (&block), sizeof(block));
+    int num = block.size;
+    for(int j = 0; j < num; ++j) {
+      book_data bd = block.block[j];
+      double price = bd.Price.ToDouble();
+      std::cout << bd.ISBN << "\t" << bd.BookName << "\t" << bd.Author << "\t" << bd.Keyword
+        << "\t" << std::fixed << std::setprecision(2) << price << "\t" << bd.Storage << "\n";
+    }
+  }
+  file.close();
 }
