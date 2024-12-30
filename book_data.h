@@ -260,7 +260,7 @@ namespace book {
     const std::string &new_name, const std::string &new_author, const std::string &new_keyword,
     const std::string &new_storage, const std::string &new_price);
 
-  const book_data &Get_book(const std::string &);
+  book_data Get_book(const std::string &);
   void ShowBook(const std::string &);
 }
 

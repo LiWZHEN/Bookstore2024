@@ -950,7 +950,7 @@ void book::Edit(const std::string &ISBN, bool edit_ISBN, bool edit_name, bool ed
   file.close();
 }
 
-const book::book_data &book::Get_book(const std::string &ISBN) {
+book::book_data book::Get_book(const std::string &ISBN) {
   unsigned long long bp = IfExist(ISBN);
   Block block;
   book_data target;
@@ -972,7 +972,7 @@ void book::ShowBook(const std::string &ISBN) {
   if (bp == 0) {
     std::cout << "\n";
   } else {
-    book::book_data tgt = book::Get_book(ISBN);
+    book_data tgt = Get_book(ISBN);
     std::cout << tgt.ISBN << "\t" << tgt.BookName << "\t" << tgt.Author << "\t" << tgt.Keyword
         << "\t" << tgt.Price << "\t" << tgt.Storage << "\n";
   }
