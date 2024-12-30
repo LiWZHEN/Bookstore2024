@@ -365,7 +365,21 @@ int main() {
           for (; it < len; ++it) {
             keyword += token[it];
           }
-          // todo: create a "keyword->ISBN" file manager to handle this
+          std::vector<std::string> key = key::split(keyword);
+          if (key.size() > 1) {
+            std::cout << "Invalid\n";
+            continue;
+          }
+          std::vector<std::string> ISBN_set = keyword::find(key[0]);
+          if (ISBN_set.empty()) {
+            std::cout << "\n";
+            continue;
+          }
+          for (int i = 0; i < ISBN_set.size(); ++i) {
+            book::book_data bk = book::Get_book(ISBN_set[i]);
+            std::cout << bk.ISBN << "\t" << bk.BookName << "\t" << bk.Author << "\t" << bk.Keyword
+                << "\t" << bk.Price << "\t" << bk.Storage << "\n";
+          }
         } else {
           std::cout << "Invalid\n";
           continue;
