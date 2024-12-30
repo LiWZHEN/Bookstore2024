@@ -457,6 +457,9 @@ int main() {
       unsigned long long bp = book::IfExist(ISBN);
       if (bp == 0) { // not exist currently, add the book to book_file
         book::AddBook(ISBN, "", "", "", 0, 0);
+        /* todo book_name::insert("", ISBN);
+        author::insert("", ISBN);
+        key::insert("", ISBN);*/
       }
       logging_stack.log_stack[logging_stack.size - 1].selected_book = ISBN;
     } else if (token == "modify") {
@@ -568,8 +571,8 @@ int main() {
           continue;
         }
       }
+      book::book_data bk = book::Get_book(selected_ISBN);
       if (edit_ISBN || edit_name) {
-        book::book_data bk = book::Get_book(selected_ISBN);
         book::fixed_char_60 original_name(bk.BookName);
         book_name::erase(original_name.ToString(), selected_ISBN);
         if (edit_ISBN && edit_name) {
@@ -581,7 +584,7 @@ int main() {
         }
       }
       if (edit_ISBN || edit_author) {
-        book::fixed_char_60 original_author = book::Get_book(selected_ISBN).Author;
+        book::fixed_char_60 original_author(bk.Author);
         author::erase(original_author.ToString(), selected_ISBN);
         if (edit_ISBN && edit_author) {
           author::insert(new_name, new_ISBN);
@@ -592,7 +595,7 @@ int main() {
         }
       }
       if (edit_ISBN || edit_keyword) {
-        book::fixed_char_60 original_keyword = book::Get_book(selected_ISBN).Keyword;
+        book::fixed_char_60 original_keyword(bk.Keyword);
         keyword::erase(original_keyword.ToString(), selected_ISBN);
         if (edit_ISBN && edit_keyword) {
           keyword::insert(new_name, new_ISBN);

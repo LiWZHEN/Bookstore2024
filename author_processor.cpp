@@ -241,7 +241,7 @@ namespace author {
       file.seekp(0);
       file.write(reinterpret_cast<char *>(& menu), sizeof(menu));
       file.close();
-      return;;
+      return;
     } // can't put p in any existed block
     // we should place p in the insert_block
     block bl;
@@ -308,12 +308,12 @@ namespace author {
     file.read(reinterpret_cast<char *>(& menu), sizeof(menu)); // read the menu
     if (menu.size == 0) { // if the menu is empty, can't erase anything
       file.close();
-      return;;
+      return;
     }
     int erase_block = menu.FindUpper(p);
     if (erase_block == -1) { // improbable to have p
       file.close();
-      return;;
+      return;
     }
     block bl;
     unsigned long long block_position = menu.menu[erase_block].block_pos;
@@ -325,7 +325,7 @@ namespace author {
         file.seekp(0);
         file.write(reinterpret_cast<char *>(& menu), sizeof(menu));
         file.close();
-        return;;
+        return;
       } else { // revise the unit_menu and remove p
         index_value second = bl.pairs[1]; // it'll replace current smallest
         menu.menu[erase_block] = {block_position, second};
@@ -354,7 +354,7 @@ namespace author {
         file.seekp(front_pos);
         file.write(reinterpret_cast<char *>(& front), sizeof(front));
         file.close();
-        return;;
+        return;
       }
     }
     file.seekp(0);

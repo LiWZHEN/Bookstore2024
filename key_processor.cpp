@@ -4,6 +4,10 @@ namespace key {
     std::vector<std::string> ans;
     std::string single;
     int len = keys.length();
+    /* todo if (len == 0) {
+      ans.push_back("");
+      return ans;
+    }*/
     for (int i = 0; i < len; ++i) {
       if (keys[i] == '|') {
         ans.push_back(single);

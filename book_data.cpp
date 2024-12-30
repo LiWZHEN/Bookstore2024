@@ -758,7 +758,7 @@ void book::AddBook(const book_data &u) {
     bl.block[0] = u;
 
     file.seekp(0, std::ios::end);
-    long block_position = file.tellp();
+    unsigned long long block_position = file.tellp();
     file.write(reinterpret_cast<char *>(& bl), sizeof(bl));
 
     // revise the first one
