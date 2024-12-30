@@ -8,6 +8,7 @@
 #include "book_name_processor.h"
 #include "author_processor.h"
 #include "key_processor.h"
+#include "key_file.h"
 
 int main() {
   stack logging_stack;
