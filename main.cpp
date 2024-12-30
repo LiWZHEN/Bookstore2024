@@ -548,8 +548,10 @@ int main() {
         // only when the ISBN repetition occurs, the check will have a real impact
       }
       if (edit_keyword) {
-        // todo: check whether the key words have repetition, if repeated, print invalid and continue
-
+        if (key::Repeated(new_keyword)) {
+          std::cout << "Invalid\n";
+          continue;
+        }
       }
       if (edit_ISBN || edit_name) {
         book::fixed_char_60 original_name = book::Get_book(selected_ISBN).BookName;
@@ -565,10 +567,21 @@ int main() {
       if (edit_ISBN || edit_author) {
         book::fixed_char_60 original_author = book::Get_book(selected_ISBN).Author;
         author::erase(original_author.ToString(), selected_ISBN);
-        if (edit_ISBN && edit_name) {
+        if (edit_ISBN && edit_author) {
           author::insert(new_name, new_ISBN);
         } else if (edit_ISBN) {
           author::insert(original_author.ToString(), new_ISBN);
+        } else {
+          author::insert(new_name, selected_ISBN);
+        }
+      }
+      if (edit_ISBN || edit_keyword) {
+        book::fixed_char_60 original_keyword = book::Get_book(selected_ISBN).Keyword;
+        author::erase(original_keyword.ToString(), selected_ISBN);
+        if (edit_ISBN && edit_keyword) {
+          author::insert(new_name, new_ISBN);
+        } else if (edit_ISBN) {
+          author::insert(original_keyword.ToString(), new_ISBN);
         } else {
           author::insert(new_name, selected_ISBN);
         }
