@@ -64,6 +64,9 @@ namespace user {
     fixed_char Name;
     int privilege = 0;
     int logged = 0;
+    user_data() = default;
+    user_data(fixed_char id, fixed_char pw, fixed_char name, int privilege, int log) :
+        ID(id), Password(pw), Name(name), privilege(privilege), logged(log) {}
     user_data &operator=(const user_data &other) {
       ID = other.ID;
       Password = other.Password;

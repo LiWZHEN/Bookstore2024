@@ -32,31 +32,34 @@ int main() {
         continue;
       }
       std::string user_ID = line.nextToken();
-      if (user::IfExist(user_ID) == 0) { // user do not exist
+      unsigned long long bp = user::IfExist(user_ID);
+      if (bp == 0) { // user do not exist
         std::cout << "Invalid\n";
         continue;
       }
       // now we can confirm the user do exist
-      user::Block block;
-      int index;
       if (!line.hasMoreTokens()) { // didn't provide the password, only when the privilege is higher, it's valid
         if (logging_stack.size == 0) {
           std::cout << "Invalid\n";
           continue;
         }
         // now we can confirm there is someone who has logged in, just compare the privilege
-        unsigned long long bp = user::IfExist(user_ID); // get block position
+        user::Block block;
+        int index;
+        int priv;
         std::fstream file(user::user_file, std::ios::in | std::ios::binary);
         file.seekg(bp);
         file.read(reinterpret_cast<char *>(&block), sizeof(block));
+        file.close();
         index = block.FindUpper(user_ID);
-        if (logging_stack.log_stack[logging_stack.size - 1].privilege <= block.block[index].privilege) { // not higher
+        priv = block.block[index].privilege;
+        if (logging_stack.log_stack[logging_stack.size - 1].privilege <= priv) { // not higher
           std::cout << "Invalid\n";
           continue;
         }
 
         // the privilege is higher
-        logging_stack.LogIn(user_ID, "null", block.block[index].privilege);
+        logging_stack.LogIn(user_ID, "null", priv);
         user::Login(user_ID);
         continue;
       }
@@ -74,8 +77,19 @@ int main() {
         std::cout << "Invalid\n";
         continue;
       }
-      logging_stack.LogIn(user_ID, "null", block.block[index].privilege);
+      user::Block block;
+      int index;
+      int priv;
+      std::fstream file(user::user_file, std::ios::in | std::ios::binary);
+      file.seekg(bp);
+      file.read(reinterpret_cast<char *>(&block), sizeof(block));
+      file.close();
+
+      index = block.FindUpper(user_ID);
+      priv = block.block[index].privilege;
+      logging_stack.LogIn(user_ID, "null", priv);
       user::Login(user_ID);
+
     } else if (token == "logout") {
       if (logging_stack.size == 0) {
         std::cout << "Invalid\n";
@@ -247,6 +261,7 @@ int main() {
       }
       if (!line.hasMoreTokens()) { // has no more token
         // todo: out put all books
+        continue;
       }
       token = line.nextToken();
       if (token == "finance") {
