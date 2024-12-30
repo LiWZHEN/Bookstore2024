@@ -10,4 +10,7 @@ add_executable(code
         ./StanfordCPPLib/strlib.cpp
         user_data.cpp
         book_data.cpp
-        key_processor.cpp)
+        key_processor.cpp
+        key_file.cpp
+        book_name_processor.cpp
+        author_processor.cpp)
