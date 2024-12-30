@@ -334,6 +334,9 @@ int main() {
         } else if (chop == "name") {
           std::string name;
           for (; it < len; ++it) {
+            if (token[it] == '\"') {
+              continue;
+            }
             name += token[it];
           }
           std::vector<std::string> ISBN_set = book_name::find(name);
@@ -343,12 +346,16 @@ int main() {
           }
           for (int i = 0; i < ISBN_set.size(); ++i) {
             book::book_data bk = book::Get_book(ISBN_set[i]);
+            double price = bk.Price.ToDouble();
             std::cout << bk.ISBN << "\t" << bk.BookName << "\t" << bk.Author << "\t" << bk.Keyword
-                << "\t" << bk.Price << "\t" << bk.Storage << "\n";
+                << "\t" << std::fixed << std::setprecision(2) << price << "\t" << bk.Storage << "\n";
           }
         } else if (chop == "author") {
           std::string author;
           for (; it < len; ++it) {
+            if (token[it] == '\"') {
+              continue;
+            }
             author += token[it];
           }
           std::vector<std::string> ISBN_set = author::find(author);
@@ -358,12 +365,16 @@ int main() {
           }
           for (int i = 0; i < ISBN_set.size(); ++i) {
             book::book_data bk = book::Get_book(ISBN_set[i]);
+            double price = bk.Price.ToDouble();
             std::cout << bk.ISBN << "\t" << bk.BookName << "\t" << bk.Author << "\t" << bk.Keyword
-                << "\t" << bk.Price << "\t" << bk.Storage << "\n";
+                << "\t" << std::fixed << std::setprecision(2) << price << "\t" << bk.Storage << "\n";
           }
         } else if (chop == "keyword") {
           std::string keyword;
           for (; it < len; ++it) {
+            if (token[it] == '\"') {
+              continue;
+            }
             keyword += token[it];
           }
           std::vector<std::string> key = key::split(keyword);
@@ -378,8 +389,9 @@ int main() {
           }
           for (int i = 0; i < ISBN_set.size(); ++i) {
             book::book_data bk = book::Get_book(ISBN_set[i]);
+            double price = bk.Price.ToDouble();
             std::cout << bk.ISBN << "\t" << bk.BookName << "\t" << bk.Author << "\t" << bk.Keyword
-                << "\t" << bk.Price << "\t" << bk.Storage << "\n";
+                << "\t" << std::fixed << std::setprecision(2) << price << "\t" << bk.Storage << "\n";
           }
         } else {
           std::cout << "Invalid\n";
@@ -522,6 +534,9 @@ int main() {
           }
           edit_name = true;
           for (; it < len; ++it) {
+            if (cmd[it] == '\"') {
+              continue;
+            }
             new_name += cmd[it];
           }
         } else if (chop == "author") {
@@ -530,6 +545,9 @@ int main() {
           }
           edit_author = true;
           for (; it < len; ++it) {
+            if (cmd[it] == '\"') {
+              continue;
+            }
             new_author += cmd[it];
           }
         } else if (chop == "keyword") {
@@ -538,6 +556,9 @@ int main() {
           }
           edit_keyword = true;
           for (; it < len; ++it) {
+            if (cmd[it] == '\"') {
+              continue;
+            }
             new_keyword += cmd[it];
           }
         } else if (chop == "price") {
