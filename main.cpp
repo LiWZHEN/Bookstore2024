@@ -25,6 +25,7 @@ int main() {
     }
     TokenScanner line(command);
     line.ignoreWhitespace();
+    line.addWordCharacters("+-*/|,._=!@#$%^&()~`{}[]\\:;\"<>?");
     std::string token;
     token = line.nextToken();
     if (token == "su") {
@@ -701,6 +702,8 @@ int main() {
         std::cout << "Invalid\n";
         continue;
       }
+    } else if (token.empty()) {
+      continue;
     } else {
       std::cout << "Invalid\n";
       continue;
