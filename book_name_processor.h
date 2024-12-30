@@ -4,6 +4,8 @@
 #include <fstream>
 #include <vector>
 
+#include "book_data.h"
+
 namespace book_name {
   const unsigned long P = 131;
   const unsigned long Q = 107;
@@ -14,6 +16,11 @@ namespace book_name {
   struct hash_pair {
     unsigned long long hash1 = 0;
     unsigned long long hash2 = 0;
+    hash_pair &operator=(const hash_pair &other) {
+      hash1 = other.hash1;
+      hash2 = other.hash2;
+      return *this;
+    }
     bool operator==(const hash_pair &other) const {
       if (hash1 == other.hash1 && hash2 == other.hash2) {
         return true;
@@ -39,7 +46,12 @@ namespace book_name {
   hash_pair db_hash(const std::string &str);
   struct index_value {
     hash_pair index;
-    std::string value;
+    book::fixed_char_20 value;
+    index_value &operator=(const index_value &other) {
+      index = other.index;
+      value = other.value;
+      return *this;
+    }
     bool operator==(const index_value &other) const {
       if (index != other.index || value != other.value) {
         return false;

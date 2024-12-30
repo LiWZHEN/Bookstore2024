@@ -457,9 +457,9 @@ int main() {
       unsigned long long bp = book::IfExist(ISBN);
       if (bp == 0) { // not exist currently, add the book to book_file
         book::AddBook(ISBN, "", "", "", 0, 0);
-        /* todo book_name::insert("", ISBN);
+        book_name::insert("", ISBN);
         author::insert("", ISBN);
-        key::insert("", ISBN);*/
+        key::insert("", ISBN);
       }
       logging_stack.log_stack[logging_stack.size - 1].selected_book = ISBN;
     } else if (token == "modify") {

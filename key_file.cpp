@@ -394,14 +394,12 @@ namespace keyword {
 
     index_value small;
     small.index = index;
-    small.value = '\0';
     index_value big;
     if (index.hash2 == 18446744073709551615) {
       big.index = {index.hash1 + 1, 0};
     } else {
       big.index = {index.hash1, index.hash2 + 1};
     }
-    big.value = '\0';
     Menu menu;
     file.seekg(0);
     file.read(reinterpret_cast<char *>(& menu), sizeof(menu)); // read the menu
@@ -430,7 +428,7 @@ namespace keyword {
         if (bl.pairs[k] > big) {
           break;
         }
-        ans.push_back(bl.pairs[k].value);
+        ans.push_back(bl.pairs[k].value.ToString());
       }
       ++probable_first_block;
     }
