@@ -197,6 +197,21 @@ int main() {
         continue;
       }
       std::string Privilege = line.nextToken();
+      int privilege;
+      if (Privilege == "0") {
+        privilege = 0;
+      } else if (Privilege == "1") {
+        privilege = 1;
+      } else if (Privilege == "3") {
+        if (current_privilege == 3) {
+          std::cout << "Invalid\n";
+          continue;
+        }
+        privilege = 3;
+      } else {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
@@ -206,17 +221,7 @@ int main() {
         std::cout << "Invalid\n";
         continue;
       }
-      // input is valid
-      // check the privilege
-      int privilege = 0;
-      for (char c : Privilege) {
-        if (c - '0' > 9 || c - '0' < 0) {
-          std::cout << "Invalid\n";
-          continue;
-        }
-        privilege = privilege * 10 + (c - '0');
-      }
-      // created privilege is lower than current privilege
+      // input is valid && privilege is valid
       if (user::IfExist(UserID) != 0) {
         std::cout << "Invalid\n";
         continue;
