@@ -495,7 +495,7 @@ int main() {
         int len = cmd.length();
         std::string chop; // to see the category
         int it = 1;
-        while(cmd[it] != '=' || it < len) {
+        while(cmd[it] != '=' && it < len) {
           chop += cmd[it];
           ++it;
         }
@@ -569,7 +569,8 @@ int main() {
         }
       }
       if (edit_ISBN || edit_name) {
-        book::fixed_char_60 original_name = book::Get_book(selected_ISBN).BookName;
+        book::book_data bk = book::Get_book(selected_ISBN);
+        book::fixed_char_60 original_name(bk.BookName);
         book_name::erase(original_name.ToString(), selected_ISBN);
         if (edit_ISBN && edit_name) {
           book_name::insert(new_name, new_ISBN);
@@ -592,13 +593,13 @@ int main() {
       }
       if (edit_ISBN || edit_keyword) {
         book::fixed_char_60 original_keyword = book::Get_book(selected_ISBN).Keyword;
-        author::erase(original_keyword.ToString(), selected_ISBN);
+        keyword::erase(original_keyword.ToString(), selected_ISBN);
         if (edit_ISBN && edit_keyword) {
-          author::insert(new_name, new_ISBN);
+          keyword::insert(new_name, new_ISBN);
         } else if (edit_ISBN) {
-          author::insert(original_keyword.ToString(), new_ISBN);
+          keyword::insert(original_keyword.ToString(), new_ISBN);
         } else {
-          author::insert(new_name, selected_ISBN);
+          keyword::insert(new_name, selected_ISBN);
         }
       }
       book::Edit(selected_ISBN, edit_ISBN, edit_name, edit_author, edit_keyword, false, edit_price,
