@@ -473,11 +473,17 @@ double book::fixed_char_13::ToDouble() const {
   double ans = 0;
   for (int i = 0; i < 10; ++i) {
     if (fcg[i] == '\0') {
-      continue;
+      break;
+    } else if (fcg[i] == '.') {
+      if (i < 8) {
+        ans += (fcg[i + 1] - '0') * 0.1 + (fcg[i + 2] - '0') * 0.01;
+      } else if (i == 8) {
+        ans += (fcg[i + 1] - '0') * 0.1;
+      }
+      break;
     }
     ans = ans * 10 + (fcg[i] - '0');
   }
-  ans += (fcg[11] - '0') * 0.1 + (fcg[12] - '0') * 0.01;
   return ans;
 }
 
