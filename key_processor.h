@@ -34,5 +34,16 @@ namespace key {
       keyword::erase(split_keys[i], ISBN);
     }
   }
+  bool Repeated(const std::string &keys) {
+    std::vector<std::string> split_keys = split(keys);
+    for (int i = 0; i < split_keys.size() - 1; ++i) {
+      for (int j = i + 1; j < split_keys.size(); ++j) {
+        if (split_keys[i] == split_keys[j]) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }
 #endif //KEY_PROCESSOR_H
