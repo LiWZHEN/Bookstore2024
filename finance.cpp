@@ -1,6 +1,7 @@
 #include "finance.h"
 
 #include <iostream>
+#include <iomanip>
 
 namespace finance {
   void CreatFileIfNotExist(const std::string &fn) {
@@ -12,7 +13,7 @@ namespace finance {
     file.close();
     if (!exist) {
       std::ofstream new_file(fn);
-      unsigned size;
+      int size;
       new_file.seekp(0);
       new_file.write(reinterpret_cast<char *>(& size), sizeof(size));
       new_file.close();
@@ -76,6 +77,27 @@ namespace finance {
       ans += group[i];
     }
     std::cout << std::fixed << std::setprecision(2) << "+ " << ans.add << " - " << ans.minus << "\n";
+    file.close();
+  }
+  void print_table() {
+    int total;
+    CreatFileIfNotExist(finance_file);
+    std::fstream file(finance_file);
+    file.seekg(0);
+    file.read(reinterpret_cast<char *>(& total), sizeof(total));
+    if (total == 0) {
+      std::cout << "\n";
+      file.close();
+      return;
+    }
+    add_minus group[total];
+    file.seekg(sizeof(int));
+    file.read(reinterpret_cast<char *>(& group), sizeof(add_minus) * total);
+
+    for (int i = 0; i < total; ++i) {
+      std::cout << "|  +" << std::fixed << std::setprecision(2)
+          << group[i].add << "  |  -" << group[i].minus << "  |\n";
+    }
     file.close();
   }
 }

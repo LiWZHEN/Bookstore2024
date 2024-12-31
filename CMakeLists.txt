@@ -14,4 +14,6 @@ add_executable(code
         key_file.cpp
         book_name_processor.cpp
         author_processor.cpp
-        finance.cpp)
+        finance.cpp
+        worker.cpp
+        worker.h)

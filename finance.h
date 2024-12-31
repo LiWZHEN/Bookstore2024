@@ -31,5 +31,6 @@ namespace finance {
   void insert(double add, double minus);
   void print(int count);
   void print_all();
+  void print_table();
 }
 #endif //FINANCE_H

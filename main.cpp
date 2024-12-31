@@ -8,6 +8,7 @@
 #include "author_processor.h"
 #include "key_processor.h"
 #include "key_file.h"
+#include "worker.h"
 
 int main() {
   stack logging_stack;
@@ -19,7 +20,6 @@ int main() {
         user::Logout(logging_stack.log_stack[logging_stack.size - 1].username);
         --logging_stack.size;
       }
-      // logging_stack.exit();
       break;
     }
     TokenScanner line(command);
@@ -217,6 +217,8 @@ int main() {
         continue;
       }
       user::EditPassword(UserID, password2);
+      std::string workerID = logging_stack.log_stack[logging_stack.size - 1].username;
+      worker::insert(workerID, "edit password", UserID);
     } else if (token == "useradd") {
       if (logging_stack.size == 0) {
         std::cout << "Invalid\n";
@@ -295,6 +297,8 @@ int main() {
       }
       // do not repeat
       user::AddUser(UserID, Username, Password, privilege, false);
+      std::string workerID = logging_stack.log_stack[logging_stack.size - 1].username;
+      worker::insert(workerID, "add user", UserID);
     } else if (token == "delete") {
       if (logging_stack.size == 0) {
         std::cout << "Invalid\n";
@@ -691,8 +695,28 @@ int main() {
           keyword::insert(new_name, selected_ISBN);
         }
       }
-      book::Edit(selected_ISBN, edit_ISBN, edit_name, edit_author, edit_keyword, false, edit_price,
-          new_ISBN, new_name, new_author, new_keyword, "", new_price);
+      if (edit_ISBN || edit_name || edit_author || edit_keyword || edit_price) {
+        std::string workerID = logging_stack.log_stack[logging_stack.size - 1].username;
+        std::string operation = "edit";
+        if (edit_ISBN) {
+          operation += "_I";
+        }
+        if (edit_name) {
+          operation += "_N";
+        }
+        if (edit_author) {
+          operation += "_A";
+        }
+        if (edit_keyword) {
+          operation += "_K";
+        }
+        if (edit_price) {
+          operation += "_P";
+        }
+        book::Edit(selected_ISBN, edit_ISBN, edit_name, edit_author, edit_keyword, false, edit_price,
+            new_ISBN, new_name, new_author, new_keyword, "", new_price);
+        worker::insert(workerID, operation, selected_ISBN);
+      }
     } else if (token == "import") {
       if (logging_stack.size == 0) {
         std::cout << "Invalid\n";
@@ -762,6 +786,7 @@ int main() {
           false, true, false, "", "", "",
           "", Q, "");
       finance::insert(0, total_cost);
+      worker::insert(current_online.username, "import book", current_online.selected_book);
     } else if (token == "log") {
       if (logging_stack.size == 0) {
         std::cout << "Invalid\n";
@@ -772,8 +797,11 @@ int main() {
         std::cout << "Invalid\n";
         continue;
       }
-
     } else if (token == "report") {
+      if (!line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (logging_stack.size == 0) {
         std::cout << "Invalid\n";
         continue;
@@ -785,9 +813,17 @@ int main() {
       }
       token = line.nextToken();
       if (token == "finance") {
-
+        if (line.hasMoreTokens()) {
+          std::cout << "Invalid\n";
+          continue;
+        }
+        finance::print_table();
       } else if (token == "employee") {
-
+        if (line.hasMoreTokens()) {
+          std::cout << "Invalid\n";
+          continue;
+        }
+        worker::print_all();
       } else {
         std::cout << "Invalid\n";
         continue;
