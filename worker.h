@@ -11,7 +11,7 @@ namespace worker {
     user::fixed_char operation;
     user::fixed_char object;
     worker_work() = default;
-    worker_work(user::fixed_char name, user::fixed_char operation, user::fixed_char object)
+    worker_work(const user::fixed_char &name, const user::fixed_char &operation, const user::fixed_char &object)
         : name(name), operation(operation), object(object){}
     worker_work &operator=(const worker_work &other) {
       name = other.name;
@@ -21,7 +21,7 @@ namespace worker {
     }
   };
 
-  void insert(std::string name, std::string operation, std::string object);
+  void insert(const std::string& name, const std::string& operation, const std::string& object);
   void print_all();
 }
 #endif //WORKER_H

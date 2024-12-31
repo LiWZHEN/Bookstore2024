@@ -16,4 +16,6 @@ add_executable(code
         author_processor.cpp
         finance.cpp
         worker.cpp
-        worker.h)
+        worker.h
+        log.cpp
+        log.h)

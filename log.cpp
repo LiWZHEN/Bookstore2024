@@ -1,8 +1,7 @@
-#include "worker.h"
+#include "log.h"
 #include <iostream>
-#include <fstream>
-namespace worker {
 
+namespace log {
   void CreatFileIfNotExist(const std::string &fn) {
     bool exist = false;
     std::fstream file(fn);
@@ -18,10 +17,11 @@ namespace worker {
       new_file.close();
     }
   }
-  void insert(const std::string& name, const std::string& operation, const std::string& object) {
-    CreatFileIfNotExist(worker_file);
-    worker_work n(name, operation, object);
-    std::fstream file(worker_file);
+
+  void insert(const std::string &who, const std::string &what, const std::string &how) {
+    CreatFileIfNotExist(log_file);
+    system_log n(who, what, how);
+    std::fstream file(log_file);
     int size;
     file.seekg(0);
     file.read(reinterpret_cast<char *>(& size), sizeof(size));
@@ -35,8 +35,8 @@ namespace worker {
 
   void print_all() {
     int total;
-    CreatFileIfNotExist(worker_file);
-    std::fstream file(worker_file);
+    CreatFileIfNotExist(log_file);
+    std::fstream file(log_file);
     file.seekg(0);
     file.read(reinterpret_cast<char *>(& total), sizeof(total));
     if (total == 0) {
@@ -44,23 +44,23 @@ namespace worker {
       file.close();
       return;
     }
-    worker_work group[total];
+    system_log group[total];
     file.seekg(sizeof(int));
-    file.read(reinterpret_cast<char *>(& group), sizeof(worker_work) * total);
+    file.read(reinterpret_cast<char *>(& group), sizeof(system_log) * total);
 
     for (int i = 0; i < total; ++i) {
-      std::cout << "|" << group[i].name;
-      for (int j = 0; j < 30 - group[i].name.ToString().length(); ++j) {
+      std::cout << "|" << group[i].who;
+      for (int j = 0; j < 30 - group[i].who.ToString().length(); ++j) {
         std::cout << "_";
       }
       std::cout << "|";
-      std::cout << group[i].operation;
-      for (int j = 0; j < 30 - group[i].operation.ToString().length(); ++j) {
+      std::cout << group[i].what;
+      for (int j = 0; j < 30 - group[i].what.ToString().length(); ++j) {
         std::cout << "_";
       }
       std::cout << "|";
-      std::cout << group[i].object;
-      for (int j = 0; j < 30 - group[i].object.ToString().length(); ++j) {
+      std::cout << group[i].how;
+      for (int j = 0; j < 30 - group[i].how.ToString().length(); ++j) {
         std::cout << "_";
       }
       std::cout << "|\n";

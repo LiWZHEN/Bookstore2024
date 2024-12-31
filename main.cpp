@@ -8,6 +8,7 @@
 #include "author_processor.h"
 #include "key_processor.h"
 #include "key_file.h"
+#include "log.h"
 #include "worker.h"
 
 int main() {
@@ -219,6 +220,7 @@ int main() {
       user::EditPassword(UserID, password2);
       std::string workerID = logging_stack.log_stack[logging_stack.size - 1].username;
       worker::insert(workerID, "edit password", UserID);
+      log::insert(workerID, "edit_password", UserID);
     } else if (token == "useradd") {
       if (logging_stack.size == 0) {
         std::cout << "Invalid\n";
@@ -299,6 +301,7 @@ int main() {
       user::AddUser(UserID, Username, Password, privilege, false);
       std::string workerID = logging_stack.log_stack[logging_stack.size - 1].username;
       worker::insert(workerID, "add user", UserID);
+      log::insert(workerID, "add user", UserID);
     } else if (token == "delete") {
       if (logging_stack.size == 0) {
         std::cout << "Invalid\n";
@@ -513,8 +516,9 @@ int main() {
           true, false, "", "", "",
           "", str_new_storage,"");
       double price = target.Price.ToDouble() * quantity;
-      std::cout << price << "\n";
+      std::cout << std::fixed << std::setprecision(2) << price << "\n";
       finance::insert(price, 0);
+      log::insert("sell book", "profit", book::fixed_char_13(price).fcg);
     } else if (token == "select") {
       if (logging_stack.size == 0) {
         std::cout << "Invalid\n";
@@ -716,6 +720,7 @@ int main() {
         book::Edit(selected_ISBN, edit_ISBN, edit_name, edit_author, edit_keyword, false, edit_price,
             new_ISBN, new_name, new_author, new_keyword, "", new_price);
         worker::insert(workerID, operation, selected_ISBN);
+        log::insert(workerID, operation, selected_ISBN);
       }
     } else if (token == "import") {
       if (logging_stack.size == 0) {
@@ -786,8 +791,14 @@ int main() {
           false, true, false, "", "", "",
           "", Q, "");
       finance::insert(0, total_cost);
+      log::insert(current_online.username, "spend money", TotalCost);
       worker::insert(current_online.username, "import book", current_online.selected_book);
+      log::insert(current_online.username, "import book", current_online.selected_book);
     } else if (token == "log") {
+      if (line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (logging_stack.size == 0) {
         std::cout << "Invalid\n";
         continue;
@@ -797,6 +808,7 @@ int main() {
         std::cout << "Invalid\n";
         continue;
       }
+      log::print_all();
     } else if (token == "report") {
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
