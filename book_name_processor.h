@@ -1,6 +1,5 @@
 #ifndef HASH_PROCESSOR_H
 #define HASH_PROCESSOR_H
-#include <iostream>
 #include <fstream>
 #include <vector>
 

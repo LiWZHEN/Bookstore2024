@@ -1,5 +1,4 @@
 #include <iostream>
-
 #include "book_data.h"
 #include "StanfordCPPLib/tokenscanner.h"
 #include "log_in_and_out.h"
@@ -106,11 +105,33 @@ int main() {
         continue;
       }
       std::string user_ID = line.nextToken();
+      bool valid_ID = true;
+      for (char c : user_ID) {
+        if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
+          valid_ID = false;
+          break;
+        }
+      }
+      if (!valid_ID) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
       }
       std::string Password = line.nextToken();
+      bool valid_Password = true;
+      for (char c : Password) {
+        if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
+          valid_Password = false;
+          break;
+        }
+      }
+      if (!valid_Password) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
@@ -153,6 +174,17 @@ int main() {
           continue;
         }
         // it is the manager who omit the old password
+        bool valid_Password = true;
+        for (char c : password1) {
+          if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
+            valid_Password = false;
+            break;
+          }
+        }
+        if (!valid_Password) {
+          std::cout << "Invalid\n";
+          continue;
+        }
         user::EditPassword(UserID, password1);
         continue;
       }
@@ -173,6 +205,17 @@ int main() {
         continue;
       }
       // current password correct
+      bool valid_Password = true;
+      for (char c : password2) {
+        if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
+          valid_Password = false;
+          break;
+        }
+      }
+      if (!valid_Password) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       user::EditPassword(UserID, password2);
     } else if (token == "useradd") {
       if (logging_stack.size == 0) {
@@ -189,11 +232,33 @@ int main() {
         continue;
       }
       std::string UserID = line.nextToken();
+      bool valid_ID = true;
+      for (char c : UserID) {
+        if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
+          valid_ID = false;
+          break;
+        }
+      }
+      if (!valid_ID) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
       }
       std::string Password = line.nextToken();
+      bool valid_Password = true;
+      for (char c : Password) {
+        if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
+          valid_Password = false;
+          break;
+        }
+      }
+      if (!valid_Password) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;

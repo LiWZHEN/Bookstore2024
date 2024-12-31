@@ -1,6 +1,5 @@
 #ifndef KEY_FILE_H
 #define KEY_FILE_H
-#include <iostream>
 #include <fstream>
 #include <vector>
 
