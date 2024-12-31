@@ -499,6 +499,10 @@ int main() {
       for (char c : Quantity) {
         quantity = quantity * 10 + (c - '0');
       }
+      if (quantity == 0 || quantity < 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       unsigned long long bp = book::IfExist(ISBN);
       if (bp == 0) {
         std::cout << "Invalid\n";
