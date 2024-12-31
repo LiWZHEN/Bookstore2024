@@ -3,8 +3,6 @@
 
 #include <utility>
 
-#include "user_data.h"
-
 const int stack_capacity = 1000;
 
 struct user_book_privilege {

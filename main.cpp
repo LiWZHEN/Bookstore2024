@@ -506,7 +506,7 @@ int main() {
       }
       // target book exist
       book::book_data target = book::Get_book(ISBN);
-      if (target.Storage < Quantity) { // storage insufficient
+      if (target.Storage.ToInt() < quantity) { // storage insufficient
         std::cout << "Invalid\n";
         continue;
       }
@@ -755,7 +755,7 @@ int main() {
         std::cout << "Invalid\n";
         continue;
       }
-      if (current_online.selected_book.empty()) {
+      if (current_online.selected_book.empty() || current_online.selected_book == "null") {
         std::cout << "Invalid\n";
         continue;
       }
