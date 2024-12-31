@@ -1,25 +1,35 @@
 #ifndef FINANCE_H
 #define FINANCE_H
 
-#include <vector>
+#include <fstream>
 #include <iomanip>
 
 namespace finance {
+  const std::string finance_file = "finance.txt";
+  void CreatFileIfNotExist(const std::string &);
+
   struct add_minus {
     double add = 0;
     double minus = 0;
-  };
-  std::vector<add_minus> finance;
-  void insert(double add, double minus) {
-    for (int i = 0; i < finance.size(); ++i) {
-      finance[i].add += add;
-      finance[i].minus += minus;
+    add_minus() = default;
+    add_minus(const double a, const double m) {
+      add = a;
+      minus = m;
     }
-    finance.push_back({add, minus});
-  }
-  void print(int count) {
-    std::cout << std::fixed << std::setprecision(2) << "+ " << finance[finance.size() - count].add
-        << " - " << finance[finance.size() - count].minus << "\n";
-  }
+    add_minus &operator=(const add_minus &other) {
+      add = other.add;
+      minus = other.minus;
+      return *this;
+    }
+    add_minus &operator+=(const add_minus &other) {
+      add += other.add;
+      minus += other.minus;
+      return *this;
+    }
+  };
+
+  void insert(double add, double minus);
+  void print(int count);
+  void print_all();
 }
 #endif //FINANCE_H

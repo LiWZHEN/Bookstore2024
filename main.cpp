@@ -343,7 +343,8 @@ int main() {
           continue;
         }
         if (!line.hasMoreTokens()) {
-          finance::print(finance::finance.size());
+          finance::print_all();
+          continue;
         }
         std::string count = line.nextToken();
         if (count.length() > 10) {
@@ -361,7 +362,8 @@ int main() {
           std::cout << "Invalid\n";
           continue;
         }
-        if (book::fixed_char_10(count).ToInt() > 2147483647) {
+        int c = book::fixed_char_10(count).ToInt();
+        if (c > 2147483647) {
           std::cout << "Invalid\n";
           continue;
         }
@@ -369,8 +371,6 @@ int main() {
           std::cout << "Invalid\n";
           continue;
         }
-        // now we get count
-        int c = book::fixed_char_10(count).ToInt();
         finance::print(c);
       } else {
         int len = token.length();

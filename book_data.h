@@ -17,7 +17,6 @@ namespace book {
     fixed_char_20 &operator=(const fixed_char_20 &);
     fixed_char_20 &operator=(const std::string &);
     fixed_char_20 &operator=(std::string);
-    // fixed_char &operator=(const std::string &&);
     bool operator==(const fixed_char_20 &) const;
     bool operator!=(const fixed_char_20 &) const;
     bool operator>(const fixed_char_20 &) const;
