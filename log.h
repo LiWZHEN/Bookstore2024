@@ -1,6 +1,5 @@
 #ifndef LOG_H
 #define LOG_H
-#include <fstream>
 #include "user_data.h"
 namespace log {
   const std::string log_file = "log.txt";

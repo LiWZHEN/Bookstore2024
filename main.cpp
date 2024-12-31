@@ -696,13 +696,24 @@ int main() {
       }
       if (edit_ISBN || edit_keyword) {
         book::fixed_char_60 original_keyword(bk.Keyword);
-        keyword::erase(original_keyword.ToString(), selected_ISBN);
+        std::vector<std::string> original_keys = key::split(original_keyword.ToString());
+        for (int i = 0; i < original_keys.size(); ++i) {
+          keyword::erase(original_keys[i], selected_ISBN);
+        }
         if (edit_ISBN && edit_keyword) {
-          keyword::insert(new_name, new_ISBN);
+          std::vector<std::string> new_keys = key::split(new_keyword);
+          for (int i = 0; i < new_keys.size(); ++i) {
+            keyword::insert(new_keys[i], new_ISBN);
+          }
         } else if (edit_ISBN) {
-          keyword::insert(original_keyword.ToString(), new_ISBN);
+          for (int i = 0; i < original_keys.size(); ++i) {
+            keyword::insert(original_keys[i], new_ISBN);
+          }
         } else {
-          keyword::insert(new_name, selected_ISBN);
+          std::vector<std::string> new_keys = key::split(new_keyword);
+          for (int i = 0; i < new_keys.size(); ++i) {
+            keyword::insert(new_keys[i], selected_ISBN);
+          }
         }
       }
       if (edit_ISBN || edit_name || edit_author || edit_keyword || edit_price) {
