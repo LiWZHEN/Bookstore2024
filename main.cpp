@@ -462,8 +462,9 @@ int main() {
           for (int i = 0; i < ISBN_set.size(); ++i) {
             book::book_data bk = book::Get_book(ISBN_set[i]);
             double price = bk.Price.ToDouble();
+            int storage = bk.Storage.ToInt();
             std::cout << bk.ISBN << "\t" << bk.BookName << "\t" << bk.Author << "\t" << bk.Keyword
-                << "\t" << std::fixed << std::setprecision(2) << price << "\t" << bk.Storage << "\n";
+                << "\t" << std::fixed << std::setprecision(2) << price << "\t" << storage << "\n";
           }
         } else {
           std::cout << "Invalid\n";
@@ -559,6 +560,11 @@ int main() {
       }
       std::string selected_ISBN = logging_stack.log_stack[logging_stack.size - 1].selected_book;
       if (selected_ISBN.empty()) { // select no book
+        std::cout << "Invalid\n";
+        continue;
+      }
+      unsigned long long bp = book::IfExist(selected_ISBN);
+      if (bp == 0) {
         std::cout << "Invalid\n";
         continue;
       }
@@ -681,11 +687,11 @@ int main() {
         book::fixed_char_60 original_author(bk.Author);
         author::erase(original_author.ToString(), selected_ISBN);
         if (edit_ISBN && edit_author) {
-          author::insert(new_name, new_ISBN);
+          author::insert(new_author, new_ISBN);
         } else if (edit_ISBN) {
           author::insert(original_author.ToString(), new_ISBN);
         } else {
-          author::insert(new_name, selected_ISBN);
+          author::insert(new_author, selected_ISBN);
         }
       }
       if (edit_ISBN || edit_keyword) {
@@ -704,6 +710,11 @@ int main() {
         std::string operation = "edit";
         if (edit_ISBN) {
           operation += "_I";
+          for (int i = 0; i < logging_stack.size; ++i) {
+            if (logging_stack.log_stack[i].selected_book == selected_ISBN) {
+              logging_stack.log_stack[i].selected_book = new_ISBN;
+            }
+          }
         }
         if (edit_name) {
           operation += "_N";
@@ -759,17 +770,13 @@ int main() {
       }
       std::string TotalCost = line.nextToken();
       bool valid_T = true;
+      bool dot = false;
       for (int i = 0; i < TotalCost.length(); ++i) {
-        if (!valid_T) {
-          break;
-        }
-        if (i == TotalCost.length() - 3) {
-          if (TotalCost[i] != '.') {
-            valid_T = false;
-          }
-          continue;
-        }
         if (TotalCost[i] < '0' || TotalCost[i] > '9') {
+          if (TotalCost[i] == '.' && !dot) {
+            dot = true;
+            continue;
+          }
           valid_T = false;
           break;
         }

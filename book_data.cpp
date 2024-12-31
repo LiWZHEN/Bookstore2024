@@ -238,9 +238,14 @@ book::fixed_char_10::fixed_char_10(long a) {
     return;
   }
   int i = 0;
-  while ((a && i < 10) || (a == 0 && i == 0)) {
-    fcg[i] = '0' + a % 10;
-    a /= 10;
+  int x = 1e9;
+  while (a / x == 0 && x != 1) {
+    x /= 10;
+  }
+  while ((a && i < 10) || (a == 0 && x != 0)) {
+    fcg[i] = '0' + a / x;
+    a %= x;
+    x /= 10;
     ++i;
   }
   if (i < 10) {
@@ -343,9 +348,9 @@ const std::string book::fixed_char_10::ToString() {
 }
 const int book::fixed_char_10::ToInt() {
   int ans = 0;
-  for (int i = 9; i >= 0; --i) {
+  for (int i = 0; i < 10; ++i) {
     if (fcg[i] == '\0') {
-      continue;
+      break;
     }
     ans = ans * 10 + fcg[i] - '0';
   }
@@ -817,7 +822,7 @@ void book::AddBook(const book_data &u) {
 
     // write down the block and record its position
     file.seekp(0, std::ios::end);
-    long block_position = file.tellp();
+    unsigned long long block_position = file.tellp();
     file.write(reinterpret_cast<char *>(& new_block), sizeof(new_block));
 
     // creat a related unit_menu
@@ -852,7 +857,7 @@ void book::AddBook(const book_data &u) {
     // ok, now generate a new unit_menu
     ISBN_pos new_unit_menu;
     file.seekp(0, std::ios::end);
-    long new_u_pos = file.tellp();
+    unsigned long long new_u_pos = file.tellp();
     file.write(reinterpret_cast<char *> (& new_bl), sizeof(new_bl));
     new_unit_menu.block_pos = new_u_pos;
     new_unit_menu.ISBN = new_bl.block[0].ISBN;
