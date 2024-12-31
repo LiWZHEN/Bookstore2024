@@ -198,17 +198,18 @@ unsigned long long user::IfExist(const std::string &ID) {
 }
 
 int user::Menu::FindLower(const std::string &p) const {
-  if (menu[0].ID >= p) {
+  fixed_char id(p);
+  if (menu[0].ID >= id) {
     return -1;
   }
-  if (menu[size - 1].ID < p) {
+  if (menu[size - 1].ID < id) {
     return size - 1;
   }
   int l = 0;
   int h = size - 1;
   while (l + 1 < h) {
     int m = (l + h) / 2;
-    if (menu[m].ID < p) {
+    if (menu[m].ID < id) {
       l = m;
     } else {
       h = m;
@@ -217,17 +218,18 @@ int user::Menu::FindLower(const std::string &p) const {
   return l;
 }
 int user::Menu::FindUpper(const std::string &p) const {
-  if (menu[0].ID > p) {
+  fixed_char id(p);
+  if (menu[0].ID > id) {
     return -1;
   }
-  if (!(menu[size - 1].ID > p)) {
+  if (!(menu[size - 1].ID > id)) {
     return size - 1;
   }
   int l = 0;
   int h = size - 1;
   while (l + 1 < h) {
     int m = (l + h) / 2;
-    if (!(menu[m].ID > p)) {
+    if (!(menu[m].ID > id)) {
       l = m;
     } else {
       h = m;
@@ -305,17 +307,18 @@ void user::Menu::erase(const ID_pos &u) {
 }
 
 int user::Block::FindLower(const std::string &p) const {
-  if (block[0].ID >= p) {
+  fixed_char id(p);
+  if (block[0].ID >= id) {
     return -1;
   }
-  if (block[size - 1].ID < p) {
+  if (block[size - 1].ID < id) {
     return size - 1;
   }
   int l = 0;
   int h = size - 1;
   while (l + 1 < h) {
     int m = (l + h) / 2;
-    if (block[m].ID < p) {
+    if (block[m].ID < id) {
       l = m;
     } else {
       h = m;
@@ -324,17 +327,18 @@ int user::Block::FindLower(const std::string &p) const {
   return l;
 }
 int user::Block::FindUpper(const std::string &p) const {
-  if (block[0].ID > p) {
+  fixed_char id(p);
+  if (block[0].ID > id) {
     return -1;
   }
-  if (!(block[size - 1].ID > p)) {
+  if (!(block[size - 1].ID > id)) {
     return size - 1;
   }
   int l = 0;
   int h = size - 1;
   while (l + 1 < h) {
     int m = (l + h) / 2;
-    if (!(block[m].ID > p)) {
+    if (!(block[m].ID > id)) {
       l = m;
     } else {
       h = m;
@@ -343,11 +347,11 @@ int user::Block::FindUpper(const std::string &p) const {
   return l;
 }
 void user::Block::insert(const user_data &u) {
-  const std::string ID = u.ID.fcg;
-  if (ID == block[0].ID.ToString() || ID == block[size - 1].ID.ToString()) {
+  const fixed_char ID = u.ID;
+  if (ID == block[0].ID || ID == block[size - 1].ID) {
     return;
   }
-  if (ID > block[size - 1].ID.ToString()) {
+  if (ID > block[size - 1].ID) {
     block[size] = u;
     ++size;
   } else {
@@ -370,14 +374,15 @@ void user::Block::insert(const user_data &u) {
   }
 }
 void user::Block::erase(const std::string &ID) {
-  if (ID > block[size - 1].ID.ToString() || ID < block[0].ID.ToString()) {
+  fixed_char id(ID);
+  if (id > block[size - 1].ID || id < block[0].ID) {
     return;
   }
-  if (ID == block[size - 1].ID.ToString()) {
+  if (id == block[size - 1].ID) {
     --size;
     return;
   }
-  if (ID == block[0].ID.ToString()) {
+  if (id == block[0].ID) {
     for (int t = 0; t < size - 1; ++t) {
       block[t] = block[t + 1];
     }
@@ -387,16 +392,16 @@ void user::Block::erase(const std::string &ID) {
   int l = 0, h = size - 1;
   while (h > l + 1) {
     int m = (l + h) / 2;
-    if (block[m].ID == ID) {
+    if (block[m].ID == id) {
       for (int t = m; t < size - 1; ++t) {
         block[t] = block[t + 1];
       }
       --size;
       return;
     }
-    if (block[m].ID > ID) {
+    if (block[m].ID > id) {
       h = m;
-    } else if (block[m].ID < ID) {
+    } else if (block[m].ID < id) {
       l = m;
     }
   }
@@ -584,7 +589,7 @@ int user::CheckPassword(const std::string &ID, const std::string &password) {
   file.read(reinterpret_cast<char *>(& block), sizeof(block));
   int index = block.FindUpper(ID);
   file.close();
-  if (block.block[index].Password == password) {
+  if (block.block[index].Password == fixed_char(password)) {
     return 1;
   }
   return 0;
