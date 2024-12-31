@@ -377,20 +377,26 @@ book::fixed_char_13::fixed_char_13(double a) {
   double flt = a - ap;
   flt *= 100;
   int fl = (int)flt; // the double part
-  int n_int = 9; // start from the position in front of '.'
-  while ((ap && n_int >= 0) || (ap == 0 && n_int == 9)) {
+  int n_int = 0;
+  if (ap == 0) {
+    fcg[0] = '0';
+    ++n_int;
+  }
+  while (ap && n_int <= 9) {
     fcg[n_int] = '0' + ap % 10;
     ap /= 10;
-    --n_int;
+    ++n_int;
   }
-  if (n_int >= 0) {
-    for (; n_int >= 0; --n_int) {
-      fcg[n_int] = '\0';
-    }
+  if (ap > 0) {
+    std::cout << "Invalid\n";
+    return;
   }
-  fcg[10] = '.';
-  fcg[12] = '0' + fl % 10;
-  fcg[11] = '0' + fl / 10;
+  fcg[n_int] = '.';
+  fcg[n_int + 1] = '0' + fl % 10;
+  fcg[n_int + 2] = '0' + fl / 10;
+  for (int i = n_int + 3; i < 13; ++i) {
+    fcg[i] = '\0';
+  }
 }
 
 book::fixed_char_13 &book::fixed_char_13::operator=(const fixed_char_13 &other) {
@@ -405,6 +411,10 @@ book::fixed_char_13 &book::fixed_char_13::operator=(const fixed_char_13 &other) 
 book::fixed_char_13 &book::fixed_char_13::operator=(const std::string &str) {
   int len = std::min(length, (int)str.length());
   for (int i = 0; i < len; ++i) {
+    if ((str[i] < '0' || str[i] > '9') && str[i] != '.') {
+      std::cout << "Invalid\n";
+      return *this;
+    }
     fcg[i] = str[i];
   }
   if (len < length) {
@@ -417,6 +427,10 @@ book::fixed_char_13 &book::fixed_char_13::operator=(const std::string &str) {
 book::fixed_char_13 &book::fixed_char_13::operator=(std::string str) {
   int len = std::min(length, (int)str.length());
   for (int i = 0; i < len; ++i) {
+    if ((str[i] < '0' || str[i] > '9') && str[i] != '.') {
+      std::cout << "Invalid\n";
+      return *this;
+    }
     fcg[i] = str[i];
   }
   if (len < length) {
@@ -471,14 +485,21 @@ char &book::fixed_char_13::operator[](const int i) {
 }
 double book::fixed_char_13::ToDouble() const {
   double ans = 0;
-  for (int i = 0; i < 10; ++i) {
+  for (int i = 0; i < 13; ++i) {
     if (fcg[i] == '\0') {
       break;
     } else if (fcg[i] == '.') {
-      if (i < 8) {
-        ans += (fcg[i + 1] - '0') * 0.1 + (fcg[i + 2] - '0') * 0.01;
-      } else if (i == 8) {
-        ans += (fcg[i + 1] - '0') * 0.1;
+      if (i < 11) {
+        if (fcg[i + 1] != '\0') {
+          ans += (fcg[i + 1] - '0') * 0.1;
+        }
+        if (fcg[i + 2] != '\0') {
+          ans += (fcg[i + 2] - '0') * 0.01;
+        }
+      } else if (i == 11) {
+        if (fcg[i + 1] != '\0') {
+          ans += (fcg[i + 1] - '0') * 0.1;
+        }
       }
       break;
     }
