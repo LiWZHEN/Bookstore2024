@@ -559,17 +559,18 @@ unsigned long long book::IfExist(const std::string &ISBN) {
 }
 
 int book::Menu::FindLower(const std::string &p) const {
-  if (menu[0].ISBN >= p) {
+  fixed_char_20 isbn(p);
+  if (menu[0].ISBN >= isbn) {
     return -1;
   }
-  if (menu[size - 1].ISBN < p) {
+  if (menu[size - 1].ISBN < isbn) {
     return size - 1;
   }
   int l = 0;
   int h = size - 1;
   while (l + 1 < h) {
     int m = (l + h) / 2;
-    if (menu[m].ISBN < p) {
+    if (menu[m].ISBN < isbn) {
       l = m;
     } else {
       h = m;
@@ -578,17 +579,18 @@ int book::Menu::FindLower(const std::string &p) const {
   return l;
 }
 int book::Menu::FindUpper(const std::string &p) const {
-  if (menu[0].ISBN > p) {
+  fixed_char_20 isbn(p);
+  if (menu[0].ISBN > isbn) {
     return -1;
   }
-  if (!(menu[size - 1].ISBN > p)) {
+  if (!(menu[size - 1].ISBN > isbn)) {
     return size - 1;
   }
   int l = 0;
   int h = size - 1;
   while (l + 1 < h) {
     int m = (l + h) / 2;
-    if (!(menu[m].ISBN > p)) {
+    if (!(menu[m].ISBN > isbn)) {
       l = m;
     } else {
       h = m;
@@ -666,17 +668,18 @@ void book::Menu::erase(const ISBN_pos &u) {
 }
 
 int book::Block::FindLower(const std::string &p) const {
-  if (block[0].ISBN >= p) {
+  fixed_char_20 isbn(p);
+  if (block[0].ISBN >= isbn) {
     return -1;
   }
-  if (block[size - 1].ISBN < p) {
+  if (block[size - 1].ISBN < isbn) {
     return size - 1;
   }
   int l = 0;
   int h = size - 1;
   while (l + 1 < h) {
     int m = (l + h) / 2;
-    if (block[m].ISBN < p) {
+    if (block[m].ISBN < isbn) {
       l = m;
     } else {
       h = m;
@@ -685,17 +688,18 @@ int book::Block::FindLower(const std::string &p) const {
   return l;
 }
 int book::Block::FindUpper(const std::string &p) const {
-  if (block[0].ISBN > p) {
+  fixed_char_20 isbn(p);
+  if (block[0].ISBN > isbn) {
     return -1;
   }
-  if (!(block[size - 1].ISBN > p)) {
+  if (!(block[size - 1].ISBN > isbn)) {
     return size - 1;
   }
   int l = 0;
   int h = size - 1;
   while (l + 1 < h) {
     int m = (l + h) / 2;
-    if (!(block[m].ISBN > p)) {
+    if (!(block[m].ISBN > isbn)) {
       l = m;
     } else {
       h = m;
@@ -704,20 +708,20 @@ int book::Block::FindUpper(const std::string &p) const {
   return l;
 }
 void book::Block::insert(const book_data &u) {
-  const std::string ID = u.ISBN.fcg;
-  if (ID == block[0].ISBN.ToString() || ID == block[size - 1].ISBN.ToString()) {
+  const fixed_char_20 isbn(u.ISBN);
+  if (isbn == block[0].ISBN || isbn == block[size - 1].ISBN) {
     return;
   }
-  if (ID > block[size - 1].ISBN.ToString()) {
+  if (isbn > block[size - 1].ISBN) {
     block[size] = u;
     ++size;
   } else {
     int l = 0, h = size - 1;
     while (h - l > 1) {
       int m = (l + h) / 2;
-      if (block[m].ISBN > ID) {
+      if (block[m].ISBN > isbn) {
         h = m;
-      } else if (block[m].ISBN == ID) {
+      } else if (block[m].ISBN == isbn) {
         return;
       } else {
         l = m;
@@ -731,14 +735,15 @@ void book::Block::insert(const book_data &u) {
   }
 }
 void book::Block::erase(const std::string &ISBN) {
-  if (ISBN > block[size - 1].ISBN.ToString() || ISBN < block[0].ISBN.ToString()) {
+  const fixed_char_20 isbn(ISBN);
+  if (isbn > block[size - 1].ISBN || isbn < block[0].ISBN) {
     return;
   }
-  if (ISBN == block[size - 1].ISBN.ToString()) {
+  if (isbn == block[size - 1].ISBN) {
     --size;
     return;
   }
-  if (ISBN == block[0].ISBN.ToString()) {
+  if (isbn == block[0].ISBN) {
     for (int t = 0; t < size - 1; ++t) {
       block[t] = block[t + 1];
     }
@@ -748,16 +753,16 @@ void book::Block::erase(const std::string &ISBN) {
   int l = 0, h = size - 1;
   while (h > l + 1) {
     int m = (l + h) / 2;
-    if (block[m].ISBN == ISBN) {
+    if (block[m].ISBN == isbn) {
       for (int t = m; t < size - 1; ++t) {
         block[t] = block[t + 1];
       }
       --size;
       return;
     }
-    if (block[m].ISBN > ISBN) {
+    if (block[m].ISBN > isbn) {
       h = m;
-    } else if (block[m].ISBN < ISBN) {
+    } else if (block[m].ISBN < isbn) {
       l = m;
     }
   }
@@ -870,6 +875,7 @@ void book::AddBook(const std::string &ISBN, const std::string &BookName,
   AddBook(b);
 }
 void book::Delete(const std::string &ISBN) {
+  fixed_char_20 isbn(ISBN);
   unsigned long long bp = IfExist(ISBN);
   if (bp == 0) { // can't find the target
     std::cout << "Invalid\n";
@@ -887,7 +893,7 @@ void book::Delete(const std::string &ISBN) {
   Block block;
   file.seekg(bp);
   file.read(reinterpret_cast<char *>(& block), sizeof(block)); // read the block
-  if (block.block[0].ISBN == ISBN) { // if we remove ID, the smallest will change
+  if (block.block[0].ISBN == isbn) { // if we remove ID, the smallest will change
     if (block.size == 1) { // empty after removal, simply ignore the whole block
       menu.erase(menu.menu[erase_block]);
       file.seekp(0);
@@ -896,8 +902,7 @@ void book::Delete(const std::string &ISBN) {
       return;
     }
     // revise the unit_menu and remove p
-    std::string second = block.block[1].ISBN.ToString(); // it'll replace current smallest
-    menu.menu[erase_block].ISBN = fixed_char_20(second);
+    menu.menu[erase_block].ISBN = block.block[1].ISBN;
     block.erase(ISBN);
   } else {
     block.erase(ISBN);
@@ -951,12 +956,13 @@ void book::Edit(const std::string &ISBN, bool edit_ISBN, bool edit_name, bool ed
   file.read(reinterpret_cast<char *> (& block), sizeof(block)); // get block
   int index = block.FindUpper(ISBN);
   if (edit_ISBN) {
-    if (block.block[index].ISBN == new_ISBN) {
+    fixed_char_20 new_isbn(new_ISBN);
+    if (block.block[index].ISBN == new_isbn) {
       std::cout << "Invalid\n";
       file.close();
       return;
     }
-    block.block[index].ISBN = fixed_char_20(new_ISBN);
+    block.block[index].ISBN = new_isbn;
   }
   if (edit_name) {
     block.block[index].BookName = fixed_char_60(new_name);
