@@ -14,7 +14,14 @@
 int main() {
   stack logging_stack;
   std::string command;
-  while (std::getline(std::cin, command)) {
+  while (true) {
+    if (!std::getline(std::cin, command)) {
+      while (logging_stack.size > 0) {
+        user::Logout(logging_stack.log_stack[logging_stack.size - 1].username);
+        --logging_stack.size;
+      }
+      break;
+    }
     if (command == "quit" || command == "exit") {
       while (logging_stack.size > 0) {
         user::Logout(logging_stack.log_stack[logging_stack.size - 1].username);
