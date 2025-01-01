@@ -1,6 +1,5 @@
 #include <iostream>
 #include "book_data.h"
-#include "StanfordCPPLib/tokenscanner.h"
 #include "log_in_and_out.h"
 #include "user_data.h"
 #include "finance.h"
@@ -10,6 +9,7 @@
 #include "key_file.h"
 #include "log.h"
 #include "worker.h"
+#include "tokenscanner.h"
 
 int main() {
   stack logging_stack;
@@ -30,8 +30,6 @@ int main() {
       break;
     }
     TokenScanner line(command);
-    line.ignoreWhitespace();
-    line.addWordCharacters("+-*/|,._=!@#$%^&()~`{}[]\\:;\"'<>?");
     std::string token;
     token = line.nextToken();
     if (token == "su") {
