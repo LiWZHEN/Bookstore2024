@@ -4,9 +4,12 @@ namespace author {
   hash_pair db_hash(const std::string &str) {
     unsigned long hash1 = 0;
     unsigned long hash2 = 0;
-    for (int i = 0; i < str.length(); ++i) {
-      hash1 = (hash1 * P + str[i]) % M;
-      hash2 = (hash2 * Q + str[i]) % M;
+    for (char c : str) {
+      if (c == '\0') {
+        break;
+      }
+      hash1 = (hash1 * P + c) % M;
+      hash2 = (hash2 * Q + c) % M;
     }
     return {hash1, hash2};
   }
