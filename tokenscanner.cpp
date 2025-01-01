@@ -7,13 +7,13 @@ std::string TokenScanner::nextToken() {
     if (line[pos] == '\0') {
       return next_token;
     }
-    if (line[pos] == ' ') {
+    if (line[pos] == ' ' || line[pos] == '\t') {
       if (!space_end) {
         continue;
       }
       break;
     }
-    if (line[pos] != ' ') {
+    if (line[pos] != ' ' && line[pos] != '\t') {
       space_end = true;
       next_token += line[pos];
     }
