@@ -351,7 +351,7 @@ int main() {
       token = line.nextToken();
       if (token == "finance") {
         int current_privilege = logging_stack.log_stack[logging_stack.size - 1].privilege;
-        if (current_privilege < 3) {
+        if (current_privilege < 7) {
           std::cout << "Invalid\n";
           continue;
         }
