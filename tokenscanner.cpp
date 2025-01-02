@@ -1,4 +1,14 @@
 #include "tokenscanner.h"
+#include <cctype>
+
+bool TokenScanner::line_valid() const {
+  for (int i = 0; i < line.length(); ++i) {
+    if (line[i] != ' ' && std::isspace(line[i])) {
+      return false;
+    }
+  }
+  return true;
+}
 
 std::string TokenScanner::nextToken() {
   bool space_end = false;
@@ -7,13 +17,13 @@ std::string TokenScanner::nextToken() {
     if (line[pos] == '\0') {
       return next_token;
     }
-    if (line[pos] == ' ' || line[pos] == '\t') {
+    if (line[pos] == ' ') {
       if (!space_end) {
         continue;
       }
       break;
     }
-    if (line[pos] != ' ' && line[pos] != '\t') {
+    if (line[pos] != ' ') {
       space_end = true;
       next_token += line[pos];
     }
@@ -29,4 +39,80 @@ bool TokenScanner::hasMoreTokens() const {
     }
   }
   return false;
+}
+
+bool valid_int(const std::string &str) {
+  int ans = 0;
+  int digit = 0;
+  char first = '\0';
+  for (char c : str) {
+    if (c == '\0') {
+      return first != '\0';
+    }
+    if (c < '0' || c > '9') {
+      return false;
+    }
+    ans = ans * 10 + (c - '0');
+    ++digit;
+    if (first == '\0') {
+      first = c;
+    }
+    if (ans < 0 || digit > 10 || digit == 10 && first > '2') {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool valid_double(const std::string &str) {
+  bool dot = false;
+  std::string int_part;
+  int float_part = 0;
+  int i = 0;
+  for (; i < str.length(); ++i) {
+    if (str[i] == '\0') {
+      return valid_int(int_part);
+    }
+    if (str[i] == '.') {
+      if (!valid_int(int_part)) {
+        return false;
+      }
+      dot = true;
+      ++i;
+      break;
+    }
+    if (str[i] >= '0' && str[i] <= '9') {
+      int_part += str[i];
+    } else {
+      return false;
+    }
+  }
+  if (!dot) {
+    return valid_int(int_part);
+  }
+  for (; i < str.length(); ++i) {
+    if (str[i] == '\0') {
+      break;
+    }
+    if (str[i] == '.') {
+      return false;
+    }
+    if (str[i] >= '0' && str[i] <= '9') {
+      ++float_part;
+    } else {
+      return false;
+    }
+  }
+  return float_part == 1 || float_part == 2;
+}
+
+bool valid_string(const std::string &str, int size) {
+  int n = 0;
+  for (char c : str) {
+    if (c == '\0') {
+      return n <= size;
+    }
+    ++n;
+  }
+  return n <= size;
 }
