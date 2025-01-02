@@ -30,6 +30,10 @@ int main() {
       break;
     }
     TokenScanner line(command);
+    if (!line.line_valid()) {
+      std::cout << "Invalid\n";
+      continue;
+    }
     std::string token;
     token = line.nextToken();
     if (token == "su") {
@@ -103,7 +107,6 @@ int main() {
       }
       user::Logout(logging_stack.log_stack[logging_stack.size - 1].username);
       --logging_stack.size;
-      // logging_stack.LogOut();
     } else if (token == "register") {
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
@@ -111,8 +114,14 @@ int main() {
       }
       std::string user_ID = line.nextToken();
       bool valid_ID = true;
+      int ID_len = 0;
       for (char c : user_ID) {
         if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
+          valid_ID = false;
+          break;
+        }
+        ++ID_len;
+        if (ID_len > 30) {
           valid_ID = false;
           break;
         }
@@ -127,8 +136,14 @@ int main() {
       }
       std::string Password = line.nextToken();
       bool valid_Password = true;
+      int password_len = 0;
       for (char c : Password) {
         if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
+          valid_Password = false;
+          break;
+        }
+        ++password_len;
+        if (password_len > 30) {
           valid_Password = false;
           break;
         }
@@ -142,6 +157,10 @@ int main() {
         continue;
       }
       std::string Username = line.nextToken();
+      if (!valid_string(Username, 30)) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
@@ -153,7 +172,7 @@ int main() {
         continue;
       }
       // not repeat
-      user::AddUser(user_ID, Username, Password, 1, false);
+      user::AddUser(user_ID, Username, Password, 1, 0);
     } else if (token == "passwd") {
       if (logging_stack.size == 0) {
         std::cout << "Invalid\n";
@@ -180,8 +199,14 @@ int main() {
         }
         // it is the manager who omit the old password
         bool valid_Password = true;
+        int password_len = 0;
         for (char c : password1) {
           if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
+            valid_Password = false;
+            break;
+          }
+          ++password_len;
+          if (password_len > 30) {
             valid_Password = false;
             break;
           }
@@ -211,8 +236,14 @@ int main() {
       }
       // current password correct
       bool valid_Password = true;
+      int password_len = 0;
       for (char c : password2) {
         if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
+          valid_Password = false;
+          break;
+        }
+        ++password_len;
+        if (password_len > 30) {
           valid_Password = false;
           break;
         }
@@ -241,8 +272,14 @@ int main() {
       }
       std::string UserID = line.nextToken();
       bool valid_ID = true;
+      int ID_len = 0;
       for (char c : UserID) {
         if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
+          valid_ID = false;
+          break;
+        }
+        ++ID_len;
+        if (ID_len > 30) {
           valid_ID = false;
           break;
         }
@@ -257,8 +294,14 @@ int main() {
       }
       std::string Password = line.nextToken();
       bool valid_Password = true;
+      int password_len = 0;
       for (char c : Password) {
         if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
+          valid_Password = false;
+          break;
+        }
+        ++password_len;
+        if (password_len > 30) {
           valid_Password = false;
           break;
         }
@@ -543,6 +586,10 @@ int main() {
         continue;
       }
       std::string ISBN = line.nextToken();
+      if (!valid_string(ISBN, 20)) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
@@ -567,6 +614,10 @@ int main() {
         continue;
       }
       std::string selected_ISBN = logging_stack.log_stack[logging_stack.size - 1].selected_book;
+      if (!valid_string(selected_ISBN, 20)) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (selected_ISBN.empty()) { // select no book
         std::cout << "Invalid\n";
         continue;
@@ -615,6 +666,10 @@ int main() {
           for (; it < len; ++it) {
             new_ISBN += cmd[it];
           }
+          if (!valid_string(new_ISBN, 20)) {
+            repeated = true; // the variable name makes no sense here, too
+            break;
+          }
         } else if (chop == "name") {
           if (edit_name) {
             repeated = true;
@@ -655,6 +710,10 @@ int main() {
           edit_price = true;
           for (; it < len; ++it) {
             new_price += cmd[it];
+          }
+          if (!valid_double(new_price)) {
+            repeated = true;
+            break;
           }
         } else {
           repeated = true;
