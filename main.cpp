@@ -22,13 +22,6 @@ int main() {
       }
       break;
     }
-    if (command == "quit" || command == "exit") {
-      while (logging_stack.size > 0) {
-        user::Logout(logging_stack.log_stack[logging_stack.size - 1].username);
-        --logging_stack.size;
-      }
-      break;
-    }
     TokenScanner line(command);
     if (!line.line_valid()) {
       std::cout << "Invalid\n";
@@ -36,12 +29,27 @@ int main() {
     }
     std::string token;
     token = line.nextToken();
+    if (command == "quit" || command == "exit") {
+      if (line.hasMoreTokens()) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      while (logging_stack.size > 0) {
+        user::Logout(logging_stack.log_stack[logging_stack.size - 1].username);
+        --logging_stack.size;
+      }
+      break;
+    }
     if (token == "su") {
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
       }
       std::string user_ID = line.nextToken();
+      if (!valid_ID_or_pw(user_ID)) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       unsigned long long bp = user::IfExist(user_ID);
       if (bp == 0) { // user do not exist
         std::cout << "Invalid\n";
@@ -76,6 +84,10 @@ int main() {
 
       // password provided
       std::string password = line.nextToken();
+      if (!valid_ID_or_pw(password)) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       int result = user::CheckPassword(user_ID, password);
       if (result != 1) { // the password is wrong
         std::cout << "Invalid\n";
@@ -113,20 +125,7 @@ int main() {
         continue;
       }
       std::string user_ID = line.nextToken();
-      bool valid_ID = true;
-      int ID_len = 0;
-      for (char c : user_ID) {
-        if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
-          valid_ID = false;
-          break;
-        }
-        ++ID_len;
-        if (ID_len > 30) {
-          valid_ID = false;
-          break;
-        }
-      }
-      if (!valid_ID) {
+      if (!valid_ID_or_pw(user_ID)) {
         std::cout << "Invalid\n";
         continue;
       }
@@ -135,20 +134,7 @@ int main() {
         continue;
       }
       std::string Password = line.nextToken();
-      bool valid_Password = true;
-      int password_len = 0;
-      for (char c : Password) {
-        if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
-          valid_Password = false;
-          break;
-        }
-        ++password_len;
-        if (password_len > 30) {
-          valid_Password = false;
-          break;
-        }
-      }
-      if (!valid_Password) {
+      if (!valid_ID_or_pw(Password)) {
         std::cout << "Invalid\n";
         continue;
       }
@@ -157,7 +143,7 @@ int main() {
         continue;
       }
       std::string Username = line.nextToken();
-      if (!valid_string(Username, 30)) {
+      if (!valid_username(Username)) {
         std::cout << "Invalid\n";
         continue;
       }
@@ -187,38 +173,33 @@ int main() {
         continue;
       }
       std::string UserID = line.nextToken();
+      if (!valid_ID_or_pw(UserID)) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (!line.hasMoreTokens()) { // anyway the input should have one password
         std::cout << "Invalid\n";
         continue;
       }
       std::string password1 = line.nextToken();
+      if (!valid_ID_or_pw(password1)) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (!line.hasMoreTokens()) { // need to check the current privilege
         if (logging_stack.log_stack[logging_stack.size - 1].privilege != 7) {
           std::cout << "Invalid\n";
           continue;
         }
         // it is the manager who omit the old password
-        bool valid_Password = true;
-        int password_len = 0;
-        for (char c : password1) {
-          if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
-            valid_Password = false;
-            break;
-          }
-          ++password_len;
-          if (password_len > 30) {
-            valid_Password = false;
-            break;
-          }
-        }
-        if (!valid_Password) {
-          std::cout << "Invalid\n";
-          continue;
-        }
         user::EditPassword(UserID, password1);
         continue;
       }
       std::string password2 = line.nextToken();
+      if (!valid_ID_or_pw(password2)) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
@@ -235,23 +216,6 @@ int main() {
         continue;
       }
       // current password correct
-      bool valid_Password = true;
-      int password_len = 0;
-      for (char c : password2) {
-        if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
-          valid_Password = false;
-          break;
-        }
-        ++password_len;
-        if (password_len > 30) {
-          valid_Password = false;
-          break;
-        }
-      }
-      if (!valid_Password) {
-        std::cout << "Invalid\n";
-        continue;
-      }
       user::EditPassword(UserID, password2);
       std::string workerID = logging_stack.log_stack[logging_stack.size - 1].username;
       worker::insert(workerID, "edit password", UserID);
@@ -271,20 +235,7 @@ int main() {
         continue;
       }
       std::string UserID = line.nextToken();
-      bool valid_ID = true;
-      int ID_len = 0;
-      for (char c : UserID) {
-        if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
-          valid_ID = false;
-          break;
-        }
-        ++ID_len;
-        if (ID_len > 30) {
-          valid_ID = false;
-          break;
-        }
-      }
-      if (!valid_ID) {
+      if (!valid_ID_or_pw(UserID)) {
         std::cout << "Invalid\n";
         continue;
       }
@@ -293,20 +244,7 @@ int main() {
         continue;
       }
       std::string Password = line.nextToken();
-      bool valid_Password = true;
-      int password_len = 0;
-      for (char c : Password) {
-        if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '_') {
-          valid_Password = false;
-          break;
-        }
-        ++password_len;
-        if (password_len > 30) {
-          valid_Password = false;
-          break;
-        }
-      }
-      if (!valid_Password) {
+      if (!valid_ID_or_pw(Password)) {
         std::cout << "Invalid\n";
         continue;
       }
@@ -315,6 +253,10 @@ int main() {
         continue;
       }
       std::string Privilege = line.nextToken();
+      if (!valid_privilege(Privilege)) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       int privilege;
       if (Privilege == "0") {
         privilege = 0;
@@ -335,6 +277,10 @@ int main() {
         continue;
       }
       std::string Username = line.nextToken();
+      if (!valid_username(Username)) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
@@ -364,6 +310,10 @@ int main() {
         continue;
       }
       std::string UserID = line.nextToken();
+      if (!valid_ID_or_pw(UserID)) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
@@ -401,26 +351,11 @@ int main() {
           continue;
         }
         std::string count = line.nextToken();
-        if (count.length() > 10) {
-          std::cout << "Invalid\n";
-          continue;
-        }
-        bool valid_c = true;
-        for (int i = 0; i < count.length(); ++i) {
-          if (count[i] < '0' || count[i] > '9') {
-            valid_c = false;
-            break;
-          }
-        }
-        if (!valid_c) {
+        if (!valid_int(count)) {
           std::cout << "Invalid\n";
           continue;
         }
         int c = book::fixed_char_10(count).ToInt();
-        if (c > 2147483647) {
-          std::cout << "Invalid\n";
-          continue;
-        }
         if (line.hasMoreTokens()) {
           std::cout << "Invalid\n";
           continue;
@@ -449,14 +384,43 @@ int main() {
           for (; it < len; ++it) {
             isbn += token[it];
           }
+          if (!valid_ISBN(isbn)) {
+            std::cout << "Invalid\n";
+            continue;
+          }
           book::ShowBook(isbn);
         } else if (chop == "name") {
           std::string name;
-          for (; it < len; ++it) {
+          if (token[it] != '\"') {
+            std::cout << "Invalid\n";
+            continue;
+          }
+          ++it;
+          int m = token.length() - 1;
+          while (token[m] == '\0') {
+            --m;
+          }
+          if (token[m] != '\"') {
+            std::cout << "Invalid\n";
+            continue;
+          }
+          bool valid = true;
+          int n = 0;
+          for (; it < m; ++it) {
             if (token[it] == '\"') {
-              continue;
+              valid = false;
+              break;
             }
             name += token[it];
+            ++n;
+            if (n > 60) {
+              valid = false;
+              break;
+            }
+          }
+          if (!valid) {
+            std::cout << "Invalid\n";
+            continue;
           }
           std::vector<std::string> ISBN_set = book_name::find(name);
           if (ISBN_set.empty()) {
@@ -471,11 +435,36 @@ int main() {
           }
         } else if (chop == "author") {
           std::string author;
-          for (; it < len; ++it) {
+          if (token[it] != '\"') {
+            std::cout << "Invalid\n";
+            continue;
+          }
+          ++it;
+          int m = token.length() - 1;
+          while (token[m] == '\0') {
+            --m;
+          }
+          if (token[m] != '\"') {
+            std::cout << "Invalid\n";
+            continue;
+          }
+          bool valid = true;
+          int n = 0;
+          for (; it < m; ++it) {
             if (token[it] == '\"') {
-              continue;
+              valid = false;
+              break;
             }
             author += token[it];
+            ++n;
+            if (n > 60) {
+              valid = false;
+              break;
+            }
+          }
+          if (!valid) {
+            std::cout << "Invalid\n";
+            continue;
           }
           std::vector<std::string> ISBN_set = author::find(author);
           if (ISBN_set.empty()) {
@@ -490,11 +479,36 @@ int main() {
           }
         } else if (chop == "keyword") {
           std::string keyword;
-          for (; it < len; ++it) {
+          if (token[it] != '\"') {
+            std::cout << "Invalid\n";
+            continue;
+          }
+          ++it;
+          int m = token.length() - 1;
+          while (token[m] == '\0') {
+            --m;
+          }
+          if (token[m] != '\"') {
+            std::cout << "Invalid\n";
+            continue;
+          }
+          bool valid = true;
+          int n = 0;
+          for (; it < m; ++it) {
             if (token[it] == '\"') {
-              continue;
+              valid = false;
+              break;
             }
             keyword += token[it];
+            ++n;
+            if (n > 60) {
+              valid = false;
+              break;
+            }
+          }
+          if (!valid) {
+            std::cout << "Invalid\n";
+            continue;
           }
           std::vector<std::string> key = key::split(keyword);
           if (key.size() > 1) {
@@ -528,12 +542,16 @@ int main() {
         continue;
       }
       std::string ISBN = line.nextToken();
+      if (!valid_ISBN(ISBN)) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       if (!line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
       }
       std::string Quantity = line.nextToken();
-      if (Quantity[0] == '-') {
+      if (!valid_int(Quantity)) {
         std::cout << "Invalid\n";
         continue;
       }
@@ -544,9 +562,12 @@ int main() {
       // we have got ISBN && Quantity
       int quantity = 0;
       for (char c : Quantity) {
+        if (c == '\0') {
+          break;
+        }
         quantity = quantity * 10 + (c - '0');
       }
-      if (quantity == 0 || quantity < 0) {
+      if (quantity == 0) {
         std::cout << "Invalid\n";
         continue;
       }
@@ -586,7 +607,7 @@ int main() {
         continue;
       }
       std::string ISBN = line.nextToken();
-      if (!valid_string(ISBN, 20)) {
+      if (!valid_ISBN(ISBN)) {
         std::cout << "Invalid\n";
         continue;
       }
@@ -666,7 +687,7 @@ int main() {
           for (; it < len; ++it) {
             new_ISBN += cmd[it];
           }
-          if (!valid_string(new_ISBN, 20)) {
+          if (!valid_ISBN(new_ISBN)) {
             repeated = true; // the variable name makes no sense here, too
             break;
           }
@@ -675,33 +696,93 @@ int main() {
             repeated = true;
           }
           edit_name = true;
-          for (; it < len; ++it) {
+          if (cmd[it] != '\"') {
+            repeated = true; // the variable name makes no sense here, too
+            break;
+          }
+          ++it;
+          int m = cmd.length() - 1;
+          while (cmd[m] == '\0') {
+            --m;
+          }
+          if (cmd[m] != '\"') {
+            repeated = true; // the variable name makes no sense here, too
+            break;
+          }
+          int n = 0;
+          for (; it < m; ++it) {
             if (cmd[it] == '\"') {
-              continue;
+              repeated = true; // the variable name makes no sense here, too
+              break;
             }
             new_name += cmd[it];
+            ++n;
+            if (n > 60) {
+              repeated = true; // the variable name makes no sense here, too
+              break;
+            }
           }
         } else if (chop == "author") {
           if (edit_author) {
             repeated = true;
           }
           edit_author = true;
-          for (; it < len; ++it) {
+          if (cmd[it] != '\"') {
+            repeated = true; // the variable name makes no sense here, too
+            break;
+          }
+          ++it;
+          int m = cmd.length() - 1;
+          while (cmd[m] == '\0') {
+            --m;
+          }
+          if (cmd[m] != '\"') {
+            repeated = true; // the variable name makes no sense here, too
+            break;
+          }
+          int n = 0;
+          for (; it < m; ++it) {
             if (cmd[it] == '\"') {
-              continue;
+              repeated = true; // the variable name makes no sense here, too
+              break;
             }
             new_author += cmd[it];
+            ++n;
+            if (n > 60) {
+              repeated = true; // the variable name makes no sense here, too
+              break;
+            }
           }
         } else if (chop == "keyword") {
           if (edit_keyword) {
             repeated = true;
           }
           edit_keyword = true;
-          for (; it < len; ++it) {
+          if (cmd[it] != '\"') {
+            repeated = true; // the variable name makes no sense here, too
+            break;
+          }
+          ++it;
+          int m = cmd.length() - 1;
+          while (cmd[m] == '\0') {
+            --m;
+          }
+          if (cmd[m] != '\"') {
+            repeated = true; // the variable name makes no sense here, too
+            break;
+          }
+          int n = 0;
+          for (; it < m; ++it) {
             if (cmd[it] == '\"') {
-              continue;
+              repeated = true; // the variable name makes no sense here, too
+              break;
             }
             new_keyword += cmd[it];
+            ++n;
+            if (n > 60) {
+              repeated = true; // the variable name makes no sense here, too
+              break;
+            }
           }
         } else if (chop == "price") {
           if (edit_price) {
@@ -831,14 +912,7 @@ int main() {
         continue;
       }
       std::string Quantity = line.nextToken();
-      bool valid_Q = true;
-      for (int i = 0; i < Quantity.length(); ++i) {
-        if (Quantity[i] < '0' || Quantity[i] > '9') {
-          valid_Q = false;
-          break;
-        }
-      }
-      if (!valid_Q) {
+      if (!valid_int(Quantity)) {
         std::cout << "Invalid\n";
         continue;
       }
@@ -847,19 +921,7 @@ int main() {
         continue;
       }
       std::string TotalCost = line.nextToken();
-      bool valid_T = true;
-      bool dot = false;
-      for (int i = 0; i < TotalCost.length(); ++i) {
-        if (TotalCost[i] < '0' || TotalCost[i] > '9') {
-          if (TotalCost[i] == '.' && !dot) {
-            dot = true;
-            continue;
-          }
-          valid_T = false;
-          break;
-        }
-      }
-      if (!valid_T) {
+      if (!valid_double(TotalCost)) {
         std::cout << "Invalid\n";
         continue;
       }
@@ -868,10 +930,18 @@ int main() {
         continue;
       }
       int quantity = book::fixed_char_10(Quantity).ToInt();
+      if (quantity <= 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       book::fixed_char_10 Storage = book::Get_book(current_online.selected_book).Storage;
       quantity += Storage.ToInt();
       std::string Q = book::fixed_char_10(quantity).ToString();
       double total_cost = book::fixed_char_13(TotalCost).ToDouble();
+      if (total_cost <= 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       book::Edit(current_online.selected_book, false, false, false,
           false, true, false, "", "", "",
           "", Q, "");
@@ -923,13 +993,10 @@ int main() {
         worker::print_all();
       } else {
         std::cout << "Invalid\n";
-        continue;
       }
     } else if (token.empty()) {
-      continue;
     } else {
       std::cout << "Invalid\n";
-      continue;
     }
   }
   return 0;

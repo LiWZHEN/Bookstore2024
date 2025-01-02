@@ -116,3 +116,60 @@ bool valid_string(const std::string &str, int size) {
   }
   return n <= size;
 }
+
+bool valid_ID_or_pw(const std::string &str) {
+  int len = 0;
+  for (char c : str) {
+    if (c == '\0') {
+      return len != 0;
+    }
+    if ((c < '0' || c > '9') && (c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && c != '_') {
+      return false;
+    }
+    ++len;
+    if (len > 30) {
+      return false;
+    }
+  }
+  return len > 0;
+}
+
+bool valid_privilege(const std::string &str) {
+  if (!valid_int(str)) {
+    return false;
+  }
+  int a = 0;
+  for (char c : str) {
+    if (c == '\0') {
+      return a == 1;
+    }
+    if (c != '0' && c != '1' && c != '3' && c != '7') {
+      return false;
+    }
+    ++a;
+    if (a > 1) {
+      return false;
+    }
+  }
+  return a == 1;
+}
+
+bool valid_username(const std::string &str) {
+  return valid_string(str, 30);
+}
+
+bool valid_ISBN(const std::string &str) {
+  return valid_string(str, 20);
+}
+
+bool valid_B_A_K(const std::string &str) {
+  if(!valid_string(str, 60)) {
+    return false;
+  }
+  for (char c : str) {
+    if (c == '\"') {
+      return false;
+    }
+  }
+  return true;
+}
