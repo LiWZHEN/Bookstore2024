@@ -414,11 +414,6 @@ void user::Block::erase(const user_data &u) {
 
 void user::AddUser(const user_data &u) {
   const std::string id = u.ID.fcg;
-  unsigned long long bp = IfExist(id);
-  if (bp != 0) {
-    std::cout << "Invalid\n";
-    return;
-  }
   std::fstream file(user_file);
   Menu menu;
   file.seekg(0);
@@ -514,10 +509,6 @@ void user::AddUser(const std::string &ID, const std::string &Name, const std::st
 }
 void user::Delete(const std::string &ID) {
   unsigned long long bp = IfExist(ID);
-  if (bp == 0) { // can't find the target
-    std::cout << "Invalid\n";
-    return;
-  }
 
   // there is the target in the block whose position is bp
   std::fstream file(user_file);
@@ -579,10 +570,6 @@ void user::Delete(const user_data &u) {
 }
 int user::CheckPassword(const std::string &ID, const std::string &password) {
   unsigned long long bp = IfExist(ID);
-  if (bp == 0) {
-    std::cout << "Invalid\n";
-    return -1;
-  }
   std::fstream file(user_file);
   Block block;
   file.seekg(bp);
@@ -596,10 +583,6 @@ int user::CheckPassword(const std::string &ID, const std::string &password) {
 }
 void user::EditPassword(const std::string &ID, const std::string &NewPassword) {
   unsigned long long bp = IfExist(ID);
-  if (bp == 0) {
-    std::cout << "Invalid\n";
-    return;
-  }
   std::fstream file(user_file);
   Block block;
   file.seekg(bp);
@@ -612,10 +595,6 @@ void user::EditPassword(const std::string &ID, const std::string &NewPassword) {
 }
 bool user::IfOnline(const std::string &ID) {
   unsigned long long bp = IfExist(ID);
-  if (bp == 0) {
-    std::cout << "Invalid\n";
-    return false;
-  }
   std::fstream file(user_file);
   Block block;
   file.seekg(bp);
@@ -626,10 +605,6 @@ bool user::IfOnline(const std::string &ID) {
 }
 void user::Login(const std::string &ID) {
   unsigned long long bp = IfExist(ID);
-  if (bp == 0) {
-    std::cout << "Invalid\n";
-    return;
-  }
   std::fstream file(user_file);
   Block block;
   file.seekg(bp);
@@ -642,10 +617,6 @@ void user::Login(const std::string &ID) {
 }
 void user::Logout(const std::string &ID) {
   unsigned long long bp = IfExist(ID);
-  if (bp == 0) {
-    std::cout << "Invalid\n";
-    return;
-  }
   std::fstream file(user_file);
   Block block;
   file.seekg(bp);

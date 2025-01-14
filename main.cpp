@@ -192,6 +192,10 @@ int main() {
           continue;
         }
         // it is the manager who omit the old password
+        if (user::IfExist(UserID) == 0) {
+          std::cout << "Invalid\n";
+          continue;
+        }
         user::EditPassword(UserID, password1);
         continue;
       }
