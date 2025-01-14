@@ -117,6 +117,10 @@ int main() {
         std::cout << "Invalid\n";
         continue;
       }
+      if (logging_stack.log_stack[logging_stack.size - 1].privilege < 1) {
+        std::cout << "Invalid\n";
+        continue;
+      }
       user::Logout(logging_stack.log_stack[logging_stack.size - 1].username);
       --logging_stack.size;
     } else if (token == "register") {
@@ -366,6 +370,11 @@ int main() {
         }
         finance::print(c);
       } else {
+        int current_privilege = logging_stack.log_stack[logging_stack.size - 1].privilege;
+        if (current_privilege < 1) {
+          std::cout << "Invalid\n";
+          continue;
+        }
         int len = token.length();
         if (token[0] != '-') {
           std::cout << "Invalid\n";
@@ -554,6 +563,11 @@ int main() {
       }
     } else if (token == "buy") {
       if (logging_stack.size == 0) {
+        std::cout << "Invalid\n";
+        continue;
+      }
+      int current_privilege = logging_stack.log_stack[logging_stack.size - 1].privilege;
+      if (current_privilege < 1) {
         std::cout << "Invalid\n";
         continue;
       }
