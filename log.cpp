@@ -49,6 +49,9 @@ namespace log {
     file.read(reinterpret_cast<char *>(& group), sizeof(system_log) * total);
 
     for (int i = 0; i < total; ++i) {
+      if (group[i].who == user::fixed_char()) {
+        continue;
+      }
       std::cout << "|" << group[i].who;
       for (int j = 0; j < 30 - group[i].who.ToString().length(); ++j) {
         std::cout << "_";

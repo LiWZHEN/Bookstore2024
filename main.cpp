@@ -415,7 +415,7 @@ int main() {
           bool valid = true;
           int n = 0;
           for (; it < m; ++it) {
-            if (token[it] == '\"') {
+            if (token[it] == '\"' || token[it] == ' ') {
               valid = false;
               break;
             }
@@ -463,7 +463,7 @@ int main() {
           bool valid = true;
           int n = 0;
           for (; it < m; ++it) {
-            if (token[it] == '\"') {
+            if (token[it] == '\"' || token[it] == ' ') {
               valid = false;
               break;
             }
@@ -511,7 +511,7 @@ int main() {
           bool valid = true;
           int n = 0;
           for (; it < m; ++it) {
-            if (token[it] == '\"') {
+            if (token[it] == '\"' || token[it] == ' ') {
               valid = false;
               break;
             }
@@ -735,7 +735,7 @@ int main() {
           }
           int n = 0;
           for (; it < m; ++it) {
-            if (cmd[it] == '\"') {
+            if (cmd[it] == '\"' || cmd[it] == ' ') {
               repeated = true; // the variable name makes no sense here, too
               break;
             }
@@ -770,7 +770,7 @@ int main() {
           }
           int n = 0;
           for (; it < m; ++it) {
-            if (cmd[it] == '\"') {
+            if (cmd[it] == '\"' || cmd[it] == ' ') {
               repeated = true; // the variable name makes no sense here, too
               break;
             }
@@ -805,7 +805,7 @@ int main() {
           }
           int n = 0;
           for (; it < m; ++it) {
-            if (cmd[it] == '\"') {
+            if (cmd[it] == '\"' || cmd[it] == ' ') {
               repeated = true; // the variable name makes no sense here, too
               break;
             }
