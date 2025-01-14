@@ -177,5 +177,5 @@ bool valid_key(const std::string &str) {
       ++partial_len;
     }
   }
-  return true;
+  return partial_len != 0;
 }
