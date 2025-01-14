@@ -29,7 +29,7 @@ int main() {
     }
     std::string token;
     token = line.nextToken();
-    if (command == "quit" || command == "exit") {
+    if (token == "quit" || token == "exit") {
       if (line.hasMoreTokens()) {
         std::cout << "Invalid\n";
         continue;
@@ -994,7 +994,7 @@ int main() {
       } else {
         std::cout << "Invalid\n";
       }
-    } else if (token.empty()) {
+    } else if (token == "#" || token.empty()) {
     } else {
       std::cout << "Invalid\n";
     }
