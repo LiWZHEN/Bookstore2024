@@ -65,7 +65,7 @@ namespace finance {
     file.seekg(0);
     file.read(reinterpret_cast<char *>(& total), sizeof(total));
     if (total == 0) {
-      std::cout << "\n";
+      std::cout << "+ 0.00 - 0.00\n";
       file.close();
       return;
     }
