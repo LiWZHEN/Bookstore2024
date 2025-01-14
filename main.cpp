@@ -994,7 +994,7 @@ int main() {
       } else {
         std::cout << "Invalid\n";
       }
-    } else if (token == "#" || token.empty()) {
+    } else if (token[0] == '#' || token.empty()) {
     } else {
       std::cout << "Invalid\n";
     }
