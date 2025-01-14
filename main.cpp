@@ -408,6 +408,10 @@ int main() {
             std::cout << "Invalid\n";
             continue;
           }
+          if (it >= m) {
+            std::cout << "Invalid\n";
+            continue;
+          }
           bool valid = true;
           int n = 0;
           for (; it < m; ++it) {
@@ -449,6 +453,10 @@ int main() {
             --m;
           }
           if (token[m] != '\"') {
+            std::cout << "Invalid\n";
+            continue;
+          }
+          if (it >= m) {
             std::cout << "Invalid\n";
             continue;
           }
@@ -496,6 +504,10 @@ int main() {
             std::cout << "Invalid\n";
             continue;
           }
+          if (it >= m) {
+            std::cout << "Invalid\n";
+            continue;
+          }
           bool valid = true;
           int n = 0;
           for (; it < m; ++it) {
@@ -511,6 +523,10 @@ int main() {
             }
           }
           if (!valid) {
+            std::cout << "Invalid\n";
+            continue;
+          }
+          if (!valid_key(keyword)) {
             std::cout << "Invalid\n";
             continue;
           }
@@ -713,6 +729,10 @@ int main() {
             repeated = true; // the variable name makes no sense here, too
             break;
           }
+          if (it >= m) {
+            repeated = true; // the variable name makes no sense here, too
+            break;
+          }
           int n = 0;
           for (; it < m; ++it) {
             if (cmd[it] == '\"') {
@@ -741,6 +761,10 @@ int main() {
             --m;
           }
           if (cmd[m] != '\"') {
+            repeated = true; // the variable name makes no sense here, too
+            break;
+          }
+          if (it >= m) {
             repeated = true; // the variable name makes no sense here, too
             break;
           }
@@ -775,6 +799,10 @@ int main() {
             repeated = true; // the variable name makes no sense here, too
             break;
           }
+          if (it >= m) {
+            repeated = true; // the variable name makes no sense here, too
+            break;
+          }
           int n = 0;
           for (; it < m; ++it) {
             if (cmd[it] == '\"') {
@@ -787,6 +815,10 @@ int main() {
               repeated = true; // the variable name makes no sense here, too
               break;
             }
+          }
+          if (!valid_key(new_keyword)) {
+            repeated = true; // the variable name makes no sense here, too
+            break;
           }
         } else if (chop == "price") {
           if (edit_price) {

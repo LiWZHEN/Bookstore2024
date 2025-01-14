@@ -162,13 +162,19 @@ bool valid_ISBN(const std::string &str) {
   return valid_string(str, 20);
 }
 
-bool valid_B_A_K(const std::string &str) {
-  if(!valid_string(str, 60)) {
+bool valid_key(const std::string &str) {
+  if (!valid_string(str, 60)) {
     return false;
   }
+  int partial_len = 0;
   for (char c : str) {
-    if (c == '\"') {
-      return false;
+    if (c == '|') {
+      if (partial_len == 0) {
+        return false;
+      }
+      partial_len = 0;
+    } else {
+      ++partial_len;
     }
   }
   return true;
