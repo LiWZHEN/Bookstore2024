@@ -806,8 +806,8 @@ int main() {
         continue;
       }
       if (edit_ISBN) {
-        unsigned long long bp = book::IfExist(new_ISBN); // check if the ISBN has existed
-        if (bp != 0) {
+        unsigned long long blp = book::IfExist(new_ISBN); // check if the ISBN has existed
+        if (blp != 0) {
           std::cout << "Invalid\n";
           continue;
         }

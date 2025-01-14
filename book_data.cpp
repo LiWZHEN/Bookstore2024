@@ -233,10 +233,6 @@ book::fixed_char_10::fixed_char_10(const std::string &str) {
   }
 }
 book::fixed_char_10::fixed_char_10(long a) {
-  if (a < 0 || a > 2147483647) {
-    std::cout << "Invalid\n";
-    return;
-  }
   int i = 0;
   int x = 1e9;
   while (a / x == 0 && x != 1) {
@@ -252,9 +248,6 @@ book::fixed_char_10::fixed_char_10(long a) {
     for (; i < 10; ++i) {
       fcg[i] = '\0';
     }
-  } else if (a) {
-    std::cout << "Invalid\n";
-    return;
   }
 }
 
@@ -374,10 +367,6 @@ book::fixed_char_13::fixed_char_13(const std::string &str) {
   }
 }
 book::fixed_char_13::fixed_char_13(double a) {
-  if (a < 0) {
-    std::cout << "Invalid\n";
-    return;
-  }
   int ap = (int)a; // int part
   double flt = a - ap;
   flt *= 100;
@@ -391,10 +380,6 @@ book::fixed_char_13::fixed_char_13(double a) {
     fcg[n_int] = '0' + ap % 10;
     ap /= 10;
     ++n_int;
-  }
-  if (ap > 0) {
-    std::cout << "Invalid\n";
-    return;
   }
   fcg[n_int] = '.';
   fcg[n_int + 1] = '0' + fl % 10;
@@ -416,10 +401,6 @@ book::fixed_char_13 &book::fixed_char_13::operator=(const fixed_char_13 &other) 
 book::fixed_char_13 &book::fixed_char_13::operator=(const std::string &str) {
   int len = std::min(length, (int)str.length());
   for (int i = 0; i < len; ++i) {
-    if ((str[i] < '0' || str[i] > '9') && str[i] != '.') {
-      std::cout << "Invalid\n";
-      return *this;
-    }
     fcg[i] = str[i];
   }
   if (len < length) {
@@ -432,10 +413,6 @@ book::fixed_char_13 &book::fixed_char_13::operator=(const std::string &str) {
 book::fixed_char_13 &book::fixed_char_13::operator=(std::string str) {
   int len = std::min(length, (int)str.length());
   for (int i = 0; i < len; ++i) {
-    if ((str[i] < '0' || str[i] > '9') && str[i] != '.') {
-      std::cout << "Invalid\n";
-      return *this;
-    }
     fcg[i] = str[i];
   }
   if (len < length) {
@@ -780,11 +757,6 @@ void book::Block::erase(const book_data &u) {
 
 void book::AddBook(const book_data &u) {
   const std::string isbn = u.ISBN.fcg;
-  unsigned long long bp = IfExist(isbn);
-  if (bp != 0) {
-    std::cout << "Invalid\n";
-    return;
-  }
   std::fstream file(book_file);
   Menu menu;
   file.seekg(0);
@@ -882,10 +854,6 @@ void book::AddBook(const std::string &ISBN, const std::string &BookName,
 void book::Delete(const std::string &ISBN) {
   fixed_char_20 isbn(ISBN);
   unsigned long long bp = IfExist(ISBN);
-  if (bp == 0) { // can't find the target
-    std::cout << "Invalid\n";
-    return;
-  }
 
   // there is the target in the block whose position is bp
   std::fstream file(book_file);
@@ -949,10 +917,6 @@ void book::Edit(const std::string &ISBN, bool edit_ISBN, bool edit_name, bool ed
     const std::string &new_author, const std::string &new_keyword, const std::string &new_storage, const std::string &new_price) {
 
   unsigned long long bp = IfExist(ISBN);
-  if (bp == 0) {
-    std::cout << "Invalid\n";
-    return;
-  }
 
   // target book was found
   std::fstream file(book_file);
@@ -960,15 +924,6 @@ void book::Edit(const std::string &ISBN, bool edit_ISBN, bool edit_name, bool ed
   Block block;
   file.read(reinterpret_cast<char *> (& block), sizeof(block)); // get block
   int index = block.FindUpper(ISBN);
-  if (edit_ISBN) {
-    fixed_char_20 new_isbn(new_ISBN);
-    if (block.block[index].ISBN == new_isbn) {
-      std::cout << "Invalid\n";
-      file.close();
-      return;
-    }
-    block.block[index].ISBN = new_isbn;
-  }
   if (edit_name) {
     block.block[index].BookName = fixed_char_60(new_name);
   }
@@ -984,19 +939,21 @@ void book::Edit(const std::string &ISBN, bool edit_ISBN, bool edit_name, bool ed
   if (edit_price) {
     block.block[index].Price = fixed_char_13(new_price);
   }
-  file.seekp(bp);
-  file.write(reinterpret_cast<char *>(& block), sizeof(block));
-  file.close();
+  if (!edit_ISBN) {
+    file.seekp(bp);
+    file.write(reinterpret_cast<char *>(& block), sizeof(block));
+    file.close();
+  } else { // ISBN edited
+    Delete(ISBN);
+    block.block[index].ISBN = fixed_char_20(new_ISBN);
+    AddBook(block.block[index]);
+  }
 }
 
 book::book_data book::Get_book(const std::string &ISBN) {
   unsigned long long bp = IfExist(ISBN);
   Block block;
   book_data target;
-  if (bp == 0) {
-    std::cout << "Invalid\n";
-    throw;
-  }
   std::fstream file(book_file);
   file.seekg(bp);
   file.read(reinterpret_cast<char *>(& block), sizeof(block));
