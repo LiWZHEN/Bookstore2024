@@ -77,7 +77,7 @@ int main() {
         }
 
         // the privilege is higher
-        logging_stack.LogIn(user_ID, "null", priv);
+        logging_stack.LogIn(user_ID, "", priv);
         user::Login(user_ID);
         continue;
       }
@@ -109,7 +109,7 @@ int main() {
 
       index = block.FindUpper(user_ID);
       priv = block.block[index].privilege;
-      logging_stack.LogIn(user_ID, "null", priv);
+      logging_stack.LogIn(user_ID, "", priv);
       user::Login(user_ID);
 
     } else if (token == "logout") {
@@ -903,7 +903,7 @@ int main() {
         std::cout << "Invalid\n";
         continue;
       }
-      if (current_online.selected_book.empty() || current_online.selected_book == "null") {
+      if (current_online.selected_book.empty()) {
         std::cout << "Invalid\n";
         continue;
       }
@@ -994,7 +994,7 @@ int main() {
       } else {
         std::cout << "Invalid\n";
       }
-    } else if (token[0] == '#' || token.empty()) {
+    } else if (token.empty()) {
     } else {
       std::cout << "Invalid\n";
     }
